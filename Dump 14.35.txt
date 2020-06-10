@@ -1,0 +1,485 @@
+Dump 14.35
+
+1. directory service for WorkSpaces
+
+Amazon WorkSpaces을(를) 사용해 WorkSpaces라고 하는 가상의 클라우드 기반 Microsoft Windows 또는
+Amazon Linux 데스크톱을 프로비저닝할 수 있습니다
+
+ 디렉터리 : AWS Directory Service을 (를) 통해 관리되는데,
+    이는 Simple AD, AD Connector 또는 AWS 관리형 Microsoft AD라고도 하는 Microsoft
+    Active Directory용 AWS Directory Service 등의 옵션을 제공
+    
+    
+2. 당신의 회사는 현재 사용중인  EC2 instance의 performance improve를 하려 한다. require low latency
+ and high throughput. 현재 T2.medium에 deploy되어있다.
+ 인스턴스를 클러스터 배치 그룹으로 시작할 때는 다음 인스턴스 유형 중 하나를 사용해야 합니다.
+
+범용: M4, M5, M5a, M5ad, M5d, M5dn, M5n
+
+컴퓨팅 최적화: C3, C4, C5, C5d, C5n, cc2.8xlarge
+
+메모리 최적화: cr1.8xlarge, R3, R4, R5, R5a, R5ad, R5d, R5dn, R5n, X1, X1e, z1d
+
+스토리지 최적화: D2, H1, hs1.8xlarge, I2, I3, I3en
+
+액셀러레이티드 컴퓨팅: F1, G2, G3, G4dn, P2, P3, P3dn
+
+ ->Create AMIs from the instances, deploy the instances as i3.large, 
+ and start those instances in a placement group. 
+ 3. aws ec2 describe-instances
+    aws cli 문서 참조
+ 4.Add an entry to the Network Acl outbound rules for Protocol: TCP, Port Range: 80
+ 5. placement group outside 는 5Gbps Max
+ 6.NO.6 In the "start using the AWSDirect Connect steps," when can you complete the Cross Connect st ep?
+A. After verifying your virtual interface
+B. After you have received your Letter of Authorization and Connecting Facility Assignment (LOA- CFA) from AWS
+
+7.
+A . Se t u p t h e V P C w i t h a n I P a d d r e s s r a n g e o f 1 1 . 1 1 . 2 5 3 . 0 / 2 4 .
+
+C. Set up a VPN connection between a VGW and an on-premises router, 
+set the VGW as the default gateway for all traffic, and configure the on-premises router
+ to forward traffic to the Internet.
+ 8. Client --> EC2 로는Accept이나 반대가 안되므로
+ . T h e  n e t w o r k A CL  i s  d e n y i n g  o u t b o u n d  I CM P .
+ D
+9. route53을 이용하여 헬스체크 하고자 함
+ 상태 확인을 생성하고 원하는 상태 확인 작동 방식을 정의하는 값을 지정하는 방법은 다음과 같습니다.
+
+Route 53으로 모니터링하려는 웹 서버 등 엔드포인트의 IP 주소나 도메인 이름. (다른 상태 확인의 상태 또는 CloudWatch 경보의 상태도 모니터링할 수 있습니다.)
+
+Amazon Route 53이 상태 확인에 사용할 프로토콜: HTTP, HTTPS 또는 TCP.
+
+Route 53이 엔드포인트에 요청을 전송하는 주기. 이것을 요청 간격이라고 합니다.
+
+Route 53이 비정상으로 판단하게 되는, 엔드포인트의 요청 응답 연속 실패 횟수. 이것을 장애 임계치라고 합니다.
+
+필요할 경우, 엔드포인트가 비정상임을 Route 53이 탐지할 때 원하는 알림 방식. 알림을 구성하면 Route 53은 자동으로
+ CloudWatch 경보를 설정합니다. CloudWatch는 Amazon SNS를 사용하여 엔드포인트가 비정상임을 사용자에게 알립니다
+ --> ConfigureaRoute53healthchecktoaprivateIPassociatedwiththeinstancesinsidetheVPCto be checked.
+10. 10.1.0.0, 10.3.0.0 summay 하면 10.1.0.0/14 이므로 VPC 허용/16에 위반하므로 추가할 수 없음
+
+11. Direct connect를 이용하여 serveral VPC안의 여러EC2 instace들이 private S3 bucket에 접속가능하게
+ 하려고 하려한다.
+ https://docs.aws.amazon.com/ko_kr/AmazonS3/latest/user-guide/s3-user-guide.pdf
+ --> Configure private virtual interfaces for the VPCresources and for Amazon S3.
+12.  Security Group 은 allow rules만 가능하다
+
+13. RTMP 배포의 경우 최종 사용자 요청의 헤더에 따라 콘텐츠를 캐싱하도록 CloudFront를 구성할 수
+없습니다.
+
+14. CORS 구성을 사용
+
+
+15
+
+
+-->  For the period when there is no data the user should send the value as 0
+
+16. cloudFront 에서 SSL 이 보이지 않음
+https://docs.aws.amazon.com/ko_kr/AmazonCloudFront/latest/DeveloperGuide/AmazonCloudFront_DevGuide.pdf
+
+-->  Y o u r e q u e s t e d a n SSL f o r t h e w r o n g r e g i o n .
+
+17.
+--> You forgot to set a default geolocation record.
+
+18. alert from CloudWatch? A. AWSSNS
+
+19. 어느 회사의 라우팅 테이블에는 624개의 사설 ip 및 공인 ip prefix를 가지고 있다. 두개의 Direct connector
+를 가지고 있으다. configure a private virtual interface on both connections 을 a
+ virtual private gateway.로 향하게 연결하려 한다. virtual private gateway는 현재 VPC에 연결되어 있지
+않다. BGP session 또한 Establishe상태이다. The AWS Management Console reports the private 
+virtual interfaces as Down. Private Virtual interface를 Up하려면?
+-->  Attach the second virtual interface to an alternative virtual private gateway.
+
+20. confidential 데이터가 내 데이터 센터에 있다. 다이렉트 커넥트를 이용하여 보안을 유지하면서 AWS로 데이터를 옮기는 방법
+A. Set up a VPCwith a virtual private gateway. 
+C. Configure a public virtual interface on your Direct Connect connection. 
+F. Set up an IPsec tunnel between your customer gateway appliance and the virtual private gatewa 
+25. 
+X-Forwarded-For
+
+X-Forwarded-For 요청 헤더는 HTTP 또는 HTTPS 로드 밸런서를 사용할 때 클라이언트의 IP 주소를 식별하는 데 도움을 줍니다. 로드 밸런서가 클라이언트와 서버 간의 트래픽을 가로채기 때문에 서버 액세스 로그에 로드 밸런서의 IP 주소만 포함됩니다. 클라이언트의 IP 주소를 확인하려면 X-Forwarded-For 요청 헤더를 사용하십시오. Elastic Load Balancing은 X-Forwarded-For 요청 헤더에 클라이언트의 IP 주소를 저장하고 이 헤더를 서버로 전달합니다
+
+26. ans
+A.Keepbothtunnelsup. 
+B. Configure AS_PATH prepending on one of the paths. 
+
+27 An organization will be extending its existing on-premises infrastructure into the cloud. The design consists of a transit VPC that contains stateful firewalls that will be deployed in a highly available configuration across two Availability Zones for automatic failover. W h a t M U ST b e c o n f i g u r e d f o r t h i s d e s i g n t o w o r k ? ( Se l e c t t w o . ) 
+ 자동 절체 되는 시스템으로 디자인 해야 한다.
+
+A. A different Autonomous System Number (ASN) for each firewall. :아님
+B. Border Gateway Protocol (BGP) routing : 맞음
+C. Autonomous system (AS) path prepending  : 맞음 (메인/백업 개념)
+D.Staticrouting 
+E. Equal-cost multi-path routing (ECMP) : ???
+
+NO.28 You run a well-architected, multi-AZapplication in the eu-central-1 (Frankfurt) AWSregion. The application is hosted in a VPC and is only accesses from the corporate network. To support large volumes of data transfer and administration of the application, you use a single 10-Gbps AWSDirect Connect connection with multiple private virtual interfaces. As part of a review, you decide to improve the resilience of your connection to AWS and make sure that any additional connectivity does not share the same Direct Connect routers at AWS. 
+You need to provide the best levels of resilience to meet the application's needs. Which two options should you consider? (Select two.) 
+eu-cental 1리젼에 멀티 가용영역 어플리케이션이 있다. 어플리케이션은 VPC안에 있으며 회사네트웍을 통해서만 접속 가능하다.
+대용량 데이터 전송 및 어플리케이션 관리를 위해 단일 다이렉트 커넥트를 사용하고있다(멀티 사설 가상 인터페이스) 유연성 증진을 위해 추가 회선을 사용하고자 한다( 동일 다이렉트 커넥트 라우터 사용하지 않고)
+VPN백업회선은 1G이상 비추함
+A. Install a second 10-Gbps Direct Connect connection to the same Direct Connection location. : ??
+B. Deploy an IPsec VPN over a public virtual interface on a new 10-Gbps Direct Connect connection.   비추
+C. Install a second 10-Gbps Direct Connect connection to a Direct Connect location in eu-west-1. ?? 
+D. Deploy an IPsec VPN over the Internet to the eu-west-1 region for diversity.  비추
+E. Install a second 10-Gbps Direct Connect connection to a second Direct Connect location for eu- cent ral-1. : 맞음
+Answer: AE 
+
+NO.29 Your company has set up AWSDirect Connect to connect on-premises to an Amazon VPC instance. Two Direct Connect connections terminate at two different Direct Connect locations. You are using two routers, R1 and R2, at your end (one of each Direct Connect connection). R1 and R2 do NOT have connectivity between them. Both routersadvertise the same routersover BGPto the VGW. You have a stateful firewall on each router. The routers drop some of the traffic coming from the VPC. 
+            a            R1  <-------------------------------->  VGW
+            b           R2  <-------------------------------->  VGW
+
+Which two actions should you take to fix this problem? (Select two.)
+A. Use BGP AS prepend attribute to prepend additional AS numbers while advertising routers from R1 to VGW.
+     -> R2 가 우선
+B. Use BGP local preference attribute to assign R1 to a lower local preference number than R2. 
+     -> R2 가 우선
+C. Use BGP local preference attribute to assign R1 a higher local preference number than R2.
+     -> R1 이 우선
+D.Use BGP MED attributetoassignahigher MED value to the routes advertised R1 to VGW. 
+E.Use BGP MED attributetoassignahigher MED value to the routes advertised from R2 to VGW. 
+Answer: AC   -> A,B
+
+NO.30 For web distributions in Amazon CloudFront, your origin can be either an Amazon S3 bucket or _______ . 
+   HTTPserver 
+
+NO.31 To allow all traffic to access an instance in "Subnet 1" that uses "Security Group 1", what two options need to be configured? Choose the 2 correct answers:
+A.NACL rule allowing 0.0.0.0/0 to access "Subnet 1" 
+B. SecurityGroup rule in"SecurityGroup1" that allows0.0.0.0/0inbound
+C.SecurityGroup rule in"SecurityGroup1" that allows outbound trafficto 0.0.0.0/0 : 불필요 
+D. NACL rule allowing 0.0.0.0/ 0 to access "Security Group 1" 
+Answer: AB 
+
+NO.32 You wish to host a mail server on an EC2 instance.  What two steps must you take to ensure
+utmost reliability?
+Choose the correct answer:
+A. Create an EIP for the instance.
+B. Configure the mail service to serve as an open relay.
+C. Contact AWS to have a Reverse DNS record configured and to help keep your domain from SPAM
+blacklists.
+D. Provide open security group access to your instance on ports 25, 3389 and 22.
+Answer: C
+Explanation:
+Using an open relay is bad. Your security group does not require 3389 or 22 to be open
+
+NO.33 Your company just purchased a domain using another registrar and wants to use the same
+nameservers as your current domain hosted with AWS. How would this be achieved? Choose the
+correct answer:
+A. Every domain must have different nameservers.
+B. In the API, create a Reusable Delegation Set.
+C. Import the domain to your account and it will automatically set the same nameservers.
+D. In the console, create a Reusable Delegation Set.
+Answer: B
+Explanation:
+You can't create a reusable delegation set in the console. AWS does not provide the same
+nameservers to new domains, but a reusable delegation set can be used with as many domains as
+you like
+
+NO.34 The Web Application Development team is worried about malicious activity from 200 random
+IP addresses. Which action will ensure security and scalability from this type of threat?
+A. Use inbound security group rules to block the IP addresses.
+B. Use inbound network ACL rules to block the IP addresses.
+C. Use AWS WAF to block the IP addresses. : Random이므로 WAF가 적절함
+D. Write iptables rules on the instance to block the IP addresses.
+Answer: C 
+AWS WAF는 Amazon CloudFront 배포, Amazon API Gateway API 또는 Application Load Balancer에 전달 되는 HTTP(S) 요청을 모니터링할 수 있게 해주는 웹 애플리케이션 방화벽입니다. 또한 AWS WAF을 사용하여 콘텐츠에 대한 액세스를 제어할 수 있습니다. 요청이 허용되는 IP 주소나 쿼 리 문자열의 값으로부터 지정하는 조건 등 지정하는 조건에 따라, Amazon CloudFront 배포, Amazon API Gateway API 또는 Application Load Balancer는 요청된 콘텐츠나 HTTP 403 상태 코드(금지됨)로 요청에 응 답합니다. 또한 요청이 차단될 때 사용자 지정 오류 페이지를 반환하도록 CloudFront를 구성할 수 있습니다
+
+NO.35 Which of the following statements is true of AWS Elastic Beanstalk?
+A. AWS Elastic Beanstalk uses CloudWatch for monitoring and alarms, meaning CloudWatch costs are
+applied to your AWS account for any alarms that you use.
+B. AWS Elastic Beanstalk uses CloudWatch for monitoring and alarms, and both are free of charge.:공짜 아님
+C. AWS Elastic Beanstalk doesn't use CloudWatch for monitoring and alarms, but you pay extra for
+any AWS Elastic Beanstalk Alarm you set in the monitoring tool. : 알람 사용함
+D. AWS Elastic Beanstalk has its own free-of-charge monitoring tool, and you are not charged for the
+alarm you set. : 공짜 아님
+Answer: A
+Explanation:
+AWS Elastic Beanstalk uses CloudWatch for monitoring and alarms, meaning CloudWatch costs are
+applied to your AWS account for any alarms that you use.
+Reference:
+http://docs.aws.amazon.com/elasticbeanstalk/latest/dg/using-features.alarms.h
+
+NO.36 A user is running a batch process on EBS backed EC2 instances. The batch process launches
+few EC2 instances to process hadoop Map reduce jobs which can run between 50 ?600 minutes or
+sometimes for even more time. The user wants a configuration that can terminate the instance only
+when the process is completed. How can the user configure this with CloudWatch?
+사용자가 배치 프로세스가 완료되면 자동으로 인스턴스가 종료되도록 클라우드와치를 설정하려면? 
+A. Configure a job which terminates all instances after 600 minutes
+B. It is not possible to terminate instances automatically
+C. Set up the CloudWatch with Auto Scaling to terminate all the instances
+D. Configure the CloudWatch action to terminate the instance when the CPU utilization falls below
+5% : 인스턴스의 CPU사용율이 5%미만이면 인스턴스 종료
+Answer: D
+
+NO.37 Your company has decided to use AWS WorkSpaces for its hosted desktop solution. Your
+company has an existing AD of about 57,000 users, and you want to minimize authentication traffic
+from AWS to your datacenter. Your company has a lot of personnel changes, and it is crucial that
+these changes are reflected reliably. What two steps should you take? Choose the 2 correct answers:
+A. Deploy Hosted AD in AWS.
+B. Deploy an AD Connector in AWS.
+C. Create a DX connection between the datacenter and AWS.
+D. Create a VPN between the datacenter AWS.
+Answer: AC
+Explanation:
+A VPN is not reliable enough, and an AD connector will cause too much authentication traffic
+
+NO.38 Which path will be chosen first?
+Choose the correct answer:
+A. 192.168.0.0/16 AS 65000 over Direct Connect
+B. 192.0.0.0/8 AS 65000 over Direct Connect
+C. 192.168.1.0/24 AS 65000 65000 65000 over a Dynamic VPN : 롱기스트매치가 우선!
+D. 192.168.0.0/16 AS 65000 over a Static VPN
+Answer: C
+
+NO.39 Your company needs an inexpensive solution to host their AD data in the cloud. They do not
+need all of the features of AD but do need to be able to use it with WorkSpaces. What is the best
+solution? Choose the correct answer:
+A. AD Connector
+B. Hosted Microsoft AD
+C. Simple AD 
+D. Deploy an AD server on an M3.large instance
+Answer: C
+Explanation:
+Simple AD is the best choice here. If authentication is all you need, it is the most inexpensive option
+for in-cloud directory
+
+NO.40 A customer is using ABC Telecom as a network provider. The customer has 10 different
+offices connected to ABC Telecom's MPLS backbone. The customer is setting up an AWS Direct
+Connect connection to AWS and has provided the LOA-CFA to ABC Telecom. ABC Telecom has
+terminated the Direct Connect circuit into their MPLS backbone. To uniquely identify the customer's
+traffic over the MPLS backbone, the customer must encapsulate all traffic with VLAN tag 100. The
+customer wants to send traffic to multiple VPCs.
+Which two steps should be taken to meet the customer's requirement? (Select two.)
+고객이 ABC Telecom을 네트워크 제공 업체로 사용하고 있습니다. 고객은 ABC Telecom의
+MPLS 백본에 연결된 10 개의 다른 사무실을 가지고 있습니다. 고객이 AWS에 대한 AWS
+Direct Connect 연결을 설정 중이며 ABC Telecom에 LOA-CFA를 제공했습니다. ABC
+텔레콤은 직접 연결 회선을 MPLS 백본으로 종단 했습니다. MPLS 백본에서 고객의 트래픽을
+고유하게 식별하려면 VLAN 태그 100으로 모든 트래픽을 캡슐화해야 합니다. 고객은 여러
+VPC로 트래픽을 보내려고합니다.
+고객의 요구 사항을 충족시키기 위해 취해야 할 두 가지 단계는 무엇입니까?
+A. The customer performs Q-in-Q tunneling, with the AWS-required VLAN tag in the inside and VLAN
+100 as the outside tag.
+B. Create a support ticket with AWS to request the removal of the outer VLAN tag 100 as the traffic
+reaches AWS routers.
+C. Send the traffic for all VPCs with the same VLAN tag 100 and use BGP to ensure that proper
+routing takes place to the appropriate VPC.
+D. ABC Telecom removes the other tag before sending the packet to AWS.
+E. ABC Telecom creates a support ticket with AWS to exchange MPLS labels and include the AWS port
+as part of their MPLS network.
+Answer: CE
+
+NO.41 You have a data center with a 2 connection LAG. You wish to add 2 more connections, how
+many LOAs must you complete?
+Choose the correct answer:
+A. 2 : 1개의 물리적 회선당 1개의 LOA필요
+B. 1
+C. 4
+D. 0
+Answer: A
+
+NO.42 Imagine you are using AWS Direct Connect with just one connection from your router to the
+AWS Direct Connect router. If your connection becomes unavailable, the communication with AWS
+cloud is lost. What is the best method to prevent this from happening?
+라우터에서 AWS Direct Connect 라우터로 하나의 연결만으로 AWS Direct Connect를
+사용한다고 가정해 보십시오. 연결을 사용할수 없게 되면 AWS 클라우드와의 통신이
+끊어집니다. 이를 방지하는 가장 좋은 방법은 무엇입니까?
+A. AWS Direct Connect neither provides BGP nor provides the failover.
+B. AWS Direct Connect recommends to have the same configuration set up in a multi AZ zone to
+prevent such loss in connections.
+C. AWS Direct Connect recommends that you request and configure two dedicated connections to
+AWS either using BGP Multipath (Active/Active) connection or the failover (Active/Passive)
+connection.
+D. AWS Direct connect does not have a provision to prevent the situation but when you design the
+system, it is recommended to request a back-up instance to which the traffic can be re-routed.
+Answer: C
+
+NO.43 Your company has decided to deploy AWS WorkSpaces for its hosted desktop solution. Your
+manager is very concerned with security and cost, as well as reliability. What two things should be
+deployed?
+귀사는 호스팅된 데스크톱 솔루션을 위해 AWS WorkSpaces를 배포하기로 결정했습니다.
+관리자는 보안과 비용 및 안정성에 매우 관심이 있습니다. 어떤 두 가지를 배포해야 합니까?
+Choose the 2 correct answers:
+A. VPN : 정보 암호화를 위해 필요하다
+B. AWS Hosted AD : 비싸당
+C. Direct Connect
+D. AD Connector
+Answer: CD
+
+NO.44 What number does the binary number 11000000 correspond to? Choose the correct answer:
+A. 128
+B. 192
+C. 64
+D. 117
+Answer: B
+Explanation:
+128 + 64 + 0 + 0 + 0 + 0 + 0 + 0 = 192
+NO.45 A user is trying to send cus
+
+NO.45 A user is trying to send custom metrics to CloudWatch using the PutMetricData APIs. Which
+of the below mentioned points should the user needs to take care while sending the data to
+CloudWatch?
+사용자가 PutMetricData API를 사용하여 사용자 지정 지표를 CloudWatch로 보내려고 합니다.
+CloudWatch로 데이터를 전송하는 동안 사용자가 주의해야할 사항은 무엇입니까?
+
+A. The size of a request is limited to 128KB for HTTP GET requests and 64KB for HTTP POST requests
+B. The size of a request is limited to 40KB for HTTP GET requests and 8KB for HTTP POST requests
+C. The size of a request is limited to 16KB for HTTP GET requests and 80KB for HTTP POST requests
+D. The size of a request is limited to 8KB for HTTP GET requests and 40KB for HTTP POST requests
+Answer: D
+
+NO.46 Which of these modes is not a configuration mode for a WAF? Choose the correct answer:
+A. Block
+B. Allow
+C. Sleep
+D. Monitor
+Answer: C
+
+NO.47 Which CloudWatch attributes are used for the statistics generation?
+A. All the options are used
+B. Dimension
+C. Data point unit
+D. NameSpace
+Answer: A
+
+NO.48 A company is deploying a non-web application on an AWS load balancer. All targets are
+IT Certification Guaranteed, The Easy Way!
+16
+servers located on-premises that can be accessed by using AWS Direct Connect. The company wants
+to ensure that the source IP addresses of clients connecting to the application are passed all the way
+to the end server.
+How can this requirement be achieved?
+회사는 AWS로드 밸런서에 웹 이외의 응용 프로그램을 배포하고 있습니다. 모든 대상은 AWS
+Direct Connect를 사용하여 액세스할 수 있는 사내 구축 형 서버입니다. 회사는 응용
+프로그램에 연결하는 클라이언트의 원본 IP 주소가 최종 서버로 계속 전달되도록 합니다.
+이 요구 사항은 어떻게 달성 될 수 있습니까?
+A. Use a Network Load Balancer to automatically preserve the source IP address.
+B. Use a Network Load Balancer and enable the X-Forwarded-For attribute.
+C. Use a Network Load Balancer and enable the ProxyProtocol v2 attribute.
+D. Use an Application Load Balancer to automatically preserve the source IP address in the XForwarded-For header.
+Answer: C
+Explanation:
+
+If you are using HTTP services on your instances you can get the client IP with X-Forwarded-For header. 
+But If your instances running other services like SMTP, you can’t get the client IP.
+ You have to enable Proxy Protocol and implement Proxy-protocol in your backend service.
+
+Only NLBs supports source IP preserving for Non-HTTP applications on EC2 instances.
+
+
+NO.49 Your company has a highly available Direct Connect solution that utilizes two datacenters.
+Each data center contains one two-connection LAG and one standard DX connection. How many
+LOAs will be filled out in total if your company completes an order to add a new connection to each
+one of the LAGs?
+
+귀사는 두개의 데이터 센터를 활용하는 고 가용성 Direct Connect 솔루션을 보유하고
+있습니다. 각 데이터 센터에는 2 개의 연결 LAG와 1 개의 표준 DX 연결이 있습니다. 귀사에서
+LAG 각각에 새 연결을 추가하기 위해 주문을 완료하면 총 LOA 수는 몇 개입니까
+Choose the correct answer:
+A. 1
+B. 11
+C. 2
+D. 6
+Answer: D
+Explanation:
+Four LOAs are required for the first order and two more for the second
+
+NO.50 Your organization requires strict adherence to a change control process for its Amazon Elastic
+Compute Cloud (EC2) and VPC environments. The organization uses AWS CloudFormation as the AWS
+service to control and implement changes.
+Which combination of three services provides an alert for changes made outside of AWS
+CloudFormation? (Select three.)
+귀사는 EC2 (Amazon Elastic Compute Cloud) 및 VPC 환경의 변경 제어 프로세스를 엄격하게
+준수해야 합니다. 조직은 AWS CloudFormation을 AWS 서비스로 사용하여 변경 사항을
+제어하고 구현합니다. AWS CloudFormation 외부에서 변경된 사항에 대한 경고를 제공하는
+세 가지 서비스의 조합은 무엇입니까?
+A. AWS Config
+B. AWS Simple Notification Service
+C. AWS CloudWatch metrics
+D. AWS Lambda
+E. AWS CloudFormation
+F. AWS Identify and Access Management
+Answer: ABD
+
+NO.51 You have a hybrid infrastructure and you have configured your own DNS server on an EC2
+instance in your 10.1.3.0/24 subnet. This subnet resides on the VPC 10.1.0.0/16. You need your data
+center to be able to resolve Route 53 queries in your private hosted zone. What do you need to do to
+accomplish this?
+Choose the correct answer:
+하이브리드 인프라가 있고 10.1.3.0/24 서브넷의 EC2 인스턴스에 고유한 DNS 서버를
+구성했습니다. 이 서브넷은 VPC 10.1.0.0/16에 있습니다. 프라이빗 호스팅 영역에서 Route 53
+쿼리를 해결할수 있으려면 데이터 센터가 필요합니다. 이를 위해 무엇을 해야 합니까?
+정답을 선택하십시오.
+A. Disable the source/destination check flag for the DNS instance.
+B. Configure your DNS server to forward queries for the private hosted zone to 10.1.3.2.
+C. Configure your DNS server to forward queries for the private hosted zone to 10.1.0.2.
+D. Configure the VPC DHCP option set in the VPC to point to the EC2 DNS server.
+Answer: C
+Explanation:
+10.1.3.2 is not the DNS server. A DHCP option set is not needed since you are resolving AWS
+resources from on-premises not from a VPC and those instances are already configured to look to
+Route53 DNS
+
+NO.52 A company has an application running in an Amazon VPC that must be able to communicate
+with on- premises resources in a data center. Network traffic between AWS and the data center will
+initially be minimal, but will increase to more than 10 Gbps over the next few months. The company's
+goal is to launch the application as quickly as possible.
+The Network Engineer has been asked to design a hybrid IT connectivity solution.
+What should be done to meet these requirements?
+회사에는 데이터 센터의 온 프레미스 리소스와 통신할수 있어야 하는 Amazon VPC에서
+실행되는 애플리케이션이 있습니다. AWS와 데이터 센터 간의 네트워크 트래픽은 처음에는
+최소화되지만 향후 몇 개월 동안 10Gbps 이상으로 증가할것입니다. 이 회사의 목표는 가능한
+한 빨리 응용 프로그램을 시작하는 것입니다.
+네트워크 엔지니어는 하이브리드 IT 연결 솔루션을 설계해야 합니다.
+이러한 요구 사항을 충족 시키려면 어떻게 해야 합니까?
+A. Submit a 1 Gbps AWS Direct Connect connection request, then increase the number of Direct
+Connect connections, as needed.: 용량미달
+B. Allocate elastic IPs to Amazon EC2 instances for temporary access to on-premises resources, then
+provision AWS VPN connections between an Amazon VPC and the data center.
+C. Provision an AWS VPN connection between an Amazon VPC and the data center, then submit an
+AWS Direct Connect connection request. Later, cut over from the VPN connection to one or more
+Direct Connect connections, as needed.
+D. Provision a 100 Mbps AWS Direct Connect connection between an Amazon VPC and the data
+center, then submit a Direct Connect connection request. Later, cut over from the hosted connection
+to one or more Direct Connect connections, as needed.
+Answer: B
+
+NO.53 Your company is building a new data center. You currently have an on-premises data center
+that accesses your single VPC via VPN. You need to provide access to your single VPC to your new
+data center. Since your new data center build is already over budget, you need to keep costs low.
+How should you accomplish this?
+귀사는 새로운 데이터 센터를 구축하고 있습니다. 현재 VPN을 통해 단일 VPC에 액세스하는
+온 프레미스 데이터 센터가 있습니다. 단일 VPC에 대한 액세스 권한을 새로운 데이터 센터에
+제공해야 합니다. 새로운 데이터 센터 구축은 이미 예산을 초과하므로 비용을 낮게 유지해야
+합니다.
+어떻게 해야 합니까?
+Choose the correct answer:
+A. Add a Private VIF and create a Direct Connect connection.
+B. Create a new Customer Gateway and add it to your VPN using a CloudHub infrastructure model.
+C. Add a Public VIF and create a Direct Connect connection.
+D. Create a new Virtual Gateway and add it to your VPN using a CloudHub infrastructure model.
+Answer: B
+
+새 고객 게이트웨이를 작성하십시오. 비공개 VIF는 작동하지만 비용을 낮게 유지하려고합니다.
+퍼블릭 VIF는 S3와 같은 AWS 관련 리소스 전용입니다. 가상 게이트웨이는
+새 VPC에서 새 VPN 연결을 생성하는 경우 생성됩니다. 고객 게이트웨이
+VPN에 새로운 데이터 센터를 추가 할 수 있습니다
+다수의 AWS Site-to-Site VPN 연결을 사용하는 경우 AWS VPN CloudHub로 사이트 간에 보안 통신을 제공할 수 있습니다.
+ 이를 통해 원격 사이트가 VPC 뿐만 아니라 서로 통신할 수 있습니다. VPN CloudHub는 VPC와 함께 또는 VPC 없이 사용할 
+수 있는 간단한 허브 앤 스포크 모델에서 작동합니다. 이러한 설계는 여러 지사가 있고 기존 인터넷 연결을 사용하는 사용자가 
+원격 지사 간에 기본 또는 백업 연결을 위해 편리하고도 경제적인 허브 앤 스포크 모델을 구현하고자 할 때 적합합니다
+
+NO.54 You would like to ensure that all Amazon S3 buckets going forward, current and newly
+created ones, have logging enabled. What type of trigger(s) should you use?
+앞으로, 현재 및 새로 생성된 모든 Amazon S3 버킷에 로깅이 활성화되어 있는지 확인하려고
+합니다. 어떤 유형의 트리거를 사용해야 합니까?
+A. only a periodic trigger
+B. only a configuration change trigger
+C. both configuration change and periodic triggers
+D. only a transitioning trigger
+Answer: B
+This case requires only a configuration change trigger because you only need to trigger when
+S3 buckets are created and changed. There is no time component to when the trigger needs
+to fire.
+
