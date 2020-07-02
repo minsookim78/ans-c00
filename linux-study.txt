@@ -693,3 +693,1620 @@ Man7 Linux Manual Page - grep
 Wiki - 정규 표현식 (Regular Expression)
 [Wiki - 정규 표현식] 내용을 참고하세요.
 .END.
+
+
+==리눅스 네트워크 명령어====
+
+ifconfig & route
+
+ifconfig 명령어는 익숙하면서 가장 많이 사용하는 명령어 중 하나일 겁니다. 저도 리눅스를 사용하면서 많이 사용했었습니다.
+
+​
+
+ifconfig 와 route 명령어는 net-tools 패키지에 포함된 명령어이며, CentOS 7 Minimal 설치 시 포함되어 있지 않는 패키지 중 하나입니다.
+
+​
+
+명령어가 작동하지 않을 때에는 net-tools 패키지를 설치해 주시면 사용이 가능합니다.
+
+yum install net-tools
+​
+
+​
+
+ifconfig
+
+ - 활성화된 네트워크 인터페이스 정보를 출력합니다.(IP, MAC, Netmask ...)
+
+ - 만약, -a 옵션을 준다면 비활성화된 네트워크 인터페이스 정보도 출력합니다.
+
+ifconfig
+[root@dothome-world ~]# ifconfig
+eth0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+        inet 192.168.0.10  netmask 255.255.255.0  broadcast 192.168.0.255
+        inet6 fe80::5054:ff:fe9e:252a  prefixlen 64  scopeid 0x20<link>
+        ether XX:XX:XX:9e:25:XX  txqueuelen 1000  (Ethernet)
+        RX packets 296659  bytes 38489811 (36.7 MiB)
+        RX errors 0  dropped 15178  overruns 0  frame 0
+        TX packets 6143  bytes 3651583 (3.4 MiB)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+lo: flags=73<UP,LOOPBACK,RUNNING>  mtu 65536
+        inet 127.0.0.1  netmask 255.0.0.0
+        inet6 ::1  prefixlen 128  scopeid 0x10<host>
+        loop  txqueuelen 1000  (Local Loopback)
+        RX packets 2  bytes 104 (104.0 B)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 2  bytes 104 (104.0 B)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+​
+
+​
+
+route -n
+
+ - Gateway 정보를 확인할 수 있습니다.
+
+route -n
+[root@dothome-world ~]# route -n
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+0.0.0.0         192.168.0.1     0.0.0.0         UG    0      0        0 eth0
+169.254.0.0     0.0.0.0         255.255.0.0     U     1002   0        0 eth0
+192.168.0.0     0.0.0.0         255.255.255.0   U     0      0        0 eth0
+
+
+ip 명령어는 iproute2 패키지에 포함된 명령어이며, 추가 업데이트 지원이 되지 않는 ifconfig 명령어를 대체하기 위해 나온 명령어라고 합니다.
+
+(https://www.tecmint.com/ifconfig-vs-ip-command-comparing-network-configuration/)
+
+​
+
+ip addr show
+
+ - 모든 네트워크 인터페이스의 정보를 출력합니다. (IP, MAC, Netmask ...)
+
+ - 맨 뒤에 붙는 show 구문은 생략해도 됩니다.
+
+ - ip 뒤에 붙는 addr 을 단축하여 ip a 로만으로도 같은 출력을 할 수 있습니다.
+
+ip addr show
+ip addr
+ip a
+
+# 위 세개의 명령어의 출력은 같습니다.
+[root@dothome-world ~]# ip addr show
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host 
+       valid_lft forever preferred_lft forever
+2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
+    link/ether XX:XX:XX:9e:25:XX brd ff:ff:ff:ff:ff:ff
+    inet XXX.XXX.XXX.XXX/24 brd XXX.XXX.XXX.XXX scope global eth0
+       valid_lft forever preferred_lft forever
+    inet6 fe80::5054:ff:fe9e:252a/64 scope link 
+       valid_lft forever preferred_lft forever
+​
+
+​
+
+ip route show
+
+ - 네트워크 인터페이스 마다의 Gateway 정보를 확인할 수 있습니다.
+
+ - 마찬가지로 show 구문은 생략 가능합니다.
+
+ - ip r 로 명령어를 단축할 수 있습니다.
+
+ip route show
+[root@dothome-world ~]# ip route show
+default via 211.238.13.1 dev eth0 
+169.254.0.0/16 dev eth0 scope link metric 1002 
+211.238.13.0/24 dev eth0 proto kernel scope link src 211.238.13.122 
+ifup & ifdown
+
+영구적으로 각 네트워크 인터페이스마다 네트워크 설정을 하기 위해서는 "/etc/sysconfig/network-scripts"  폴더에 ifcfg 로 시작하는 파일을 통해서 설정합니다.
+
+​
+
+설정 파일이 변경되거나 추가적인 네트워크 설정을 한 경우 갱신을 위해 네트워크 전체를 재시작을 하여 처리할 수 있지만, ifup & ifdown 명령어를 이용하여 특정 네트워크 인터페이스만 네트워크 설정을 갱신할 수 있습니다.
+
+​
+
+ifconfig 나 ip 명령어를 통해 네트워크 인터페이스를 활성화 및 비활성화를 할 수 있지만 "/etc/sysconfig/network-scripts" 폴더에 저장된 네트워크 설정 파일들이 제대로 불러오지 않습니다. 자세한 내용은 다음의 링크를 참고 부탁드립니다.
+
+https://access.redhat.com/solutions/27166
+
+
+ 
+What is the difference between 'ifconfig up eth0' and 'ifup eth0'? - Red Hat Customer Portal
+What is the difference between 'ifconfig up eth0' and 'ifup eth0'?
+
+access.redhat.com
+
+​
+
+​
+
+ifup & ifdown <인터페이스 명>
+
+ - 지정한 네트워크 인터페이스를 활성화 및 비활성화를 할 수 있습니다.
+
+ - "/etc/sysconfig/network-scripts" 폴더에 있는 ifup, ifdown 파일을 기반으로 실행됩니다.
+
+# 지정한 인터페이스 활성화
+ifup <인터페이스 명>
+# 지정한 인터페이스 비활성화
+ifdown <인터페이스 명>
+# 다음과 같이 네트워크 구성이 되어있을때 ens9 인터페이스를 활성화 후 비활성화 하겠습니다.
+[root@dothome-world ~]# ip -br -4 a
+lo               UNKNOWN        127.0.0.1/8 
+eth0             UP             211.238.13.122/24 
+
+# ens9 인터페이스 활성화
+[root@dothome-world network-scripts]# ifup ens9
+[root@dothome-world network-scripts]#  ip -br -4 a
+lo               UNKNOWN        127.0.0.1/8 
+eth0             UP             211.238.13.122/24 
+ens9             UP             192.168.0.11/24 
+
+# ens9 인터페이스 비활성화
+[root@dothome-world network-scripts]#  ip -br -4 a
+lo               UNKNOWN        127.0.0.1/8 
+eth0             UP             211.238.13.122/24 
+​
+
+
+ss & netstat
+
+ss 명령어도 netstat 명령어를 대체하기 위해 나온 명령어라고 합니다. (ss 는 iproute2 패키지에, netstat 은 net-tools 패키지에)
+
+​
+
+ss와 netstat 의 차이점이 있다면 그중 하나가 ss가 netstat 보다 더 빠르게 정보를 확인할 수 있다는 점이 있습니다.
+
+​
+
+<명령어 출력 속도 테스트>
+
+[root@dothome-world ~]# time netstat 
+. . .
+real	0m0.369s
+user	0m0.042s
+sys	    0m0.016s
+[root@dothome-world ~]# time ss
+. . .
+real	0m0.010s
+user	0m0.004s
+sys	    0m0.005s
+​
+
+​
+
+두 명령어의 옵션은 비슷하지만 자주 사용했던 옵션 위주로 설명하겠습니다.
+
+-a
+
+모든 소켓을 출력
+
+-l
+
+listen 상태인 소켓 만 출력
+
+-n
+
+서비스 이름 확인 생략(호스트 이름과 포트가 숫자 형식으로 표시)
+
+-p
+
+PID 와 프로세스 명을 출력
+
+-t
+
+TCP 소켓만 출력
+
+-u
+
+UDP 소켓만 출력
+
+​
+
+​
+
+또한, 해당 명령어들 사용 시 State 탭에 있는 TCP 상태는 간단하게 아래의 표를 참고하시면 됩니다.
+
+ESTABLISHED
+
+연결 성립 상태
+
+SYN_SENT
+
+Server 에서 Client 로 연결 요청을 시도한 후 기다리는 상태
+
+SYN_RECV
+
+Client 에서 연결 요청을 받은 상태
+
+FIN_WAIT1
+
+소켓이 닫치고, 연결은 차단되고 있는 상태
+
+FIN_WAIT2
+
+연결이 닫치고, 소켓은 Client 에서 차단되는 걸 기다리는 상태
+
+TIME_WAIT
+
+네트워크가 패킷을 처리하기 위해 소켓이 닫힌 후에도 대기중인 상태
+
+CLOSE
+
+소켓이 사용되지 않는 상태
+
+CLOSE_WAIT
+
+Client 에서 종료되고 소켓이 닫힐 때까지 대기하는 상태
+
+LAST_ACK
+
+Client 가 종료되고 소켓도 닫친 후 확인을 기다리는 상태
+
+LISTEN
+
+소켓에 들어오는 연결 요청을 대기 중인 상태
+
+CLOSING
+
+Client 에서 연결 종료 요청 확인을 기다리는 상태
+
+UNKNOWN
+
+상태 확인 불가
+
+참고 URL : https://www.ibm.com/support/knowledgecenter/en/SSLTBW_2.1.0/com.ibm.zos.v2r1.halu101/constatus.html
+
+​
+
+​
+
+사용하면 유용한 옵션들을 조합한 명령어들은 다음과 같습니다.
+
+​
+
+ ss -nat & netstat -nat
+
+ - 모든 연결을 확인할 수 있습니다.
+
+ - t 옵션으로 TCP 소켓들만 확인하여 UNIX 소켓 출력을 제외할 수 있습니다.
+
+ss -nat
+netstat -nat
+[root@dothome-world ~]# ss -nat
+State       Recv-Q Send-Q             Local Address:Port                            Peer Address:Port              
+LISTEN      0      128                            *:2022                                       *:*                  
+LISTEN      0      100                    127.0.0.1:25                                         *:*                  
+ESTAB       0      0                    192.168.0.2:2022                             192.168.0.3:39392              
+LISTEN      0      128                           :::2022                                      :::*                  
+LISTEN      0      100                          ::1:25                                        :::*        
+[root@dothome-world ~]# netstat -nat
+Active Internet connections (servers and established)
+Proto Recv-Q Send-Q Local Address           Foreign Address         State      
+tcp        0      0 0.0.0.0:2022            0.0.0.0:*               LISTEN     
+tcp        0      0 127.0.0.1:25            0.0.0.0:*               LISTEN     
+tcp        0      0 192.168.0.2:2022        192.168.0.3:39392       ESTABLISHED
+tcp6       0      0 :::2022                 :::*                    LISTEN     
+tcp6       0      0 ::1:25                  :::*                    LISTEN  
+ - Client 192.168.0.3 IP 가 Server 192.168.0.2 의 2022/TCP 포트로 연결 중인 것을 알 수 있습니다.
+
+​
+
+​
+
+ss -natp & netstat -natp
+
+ - 각 연결 별 사용 중인 프로세스와 PID 를 알 수 있습니다.
+
+ - t 옵션으로 TCP 소켓들만 확인하여 UNIX 소켓 출력을 제외할 수 있습니다.
+
+ss -natp
+netstat -natp
+[root@dothome-world ~]# ss -natp
+State       Recv-Q Send-Q             Local Address:Port                            Peer Address:Port
+LISTEN      0      128                            *:2022                                       *:*                   users:(("sshd",pid=3118,fd=3))
+LISTEN      0      100                    127.0.0.1:25                                         *:*                   users:(("master",pid=3383,fd=13))
+ESTAB       0      0                    192.168.0.2:2022                             192.168.0.3:39392               users:(("sshd",pid=8530,fd=3))
+LISTEN      0      128                           :::2022                                      :::*                   users:(("sshd",pid=3118,fd=4))
+LISTEN      0      100                          ::1:25                                        :::*                   users:(("master",pid=3383,fd=14))
+[root@dothome-world ~]# netstat -natp
+Active Internet connections (servers and established)
+Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name
+tcp        0      0 0.0.0.0:2022            0.0.0.0:*               LISTEN      3118/sshd
+tcp        0      0 127.0.0.1:25            0.0.0.0:*               LISTEN      3383/master
+tcp        0      0 192.168.0.2:2022        192.168.0.3:39392       ESTABLISHED 8530/sshd: root@pts
+tcp6       0      0 :::2022                 :::*                    LISTEN      3118/sshd
+tcp6       0      0 ::1:25                  :::*                    LISTEN      3383/master
+ - 192.168.0.3 IP가 2022 포트와 PID 8530(sshd) 를 사용 중인 것을 확인할 수 있습니다.
+
+​
+
+​
+
+ss -nltp & netstat -nltp
+
+ - listen 상태인 소켓만 출력할 수 있으며, 현재 서버에서 열린 포트가 무엇이고. 어떤 프로세스로 실행 중인 것을 확인할 수 있습니다.
+
+ - u 옵션도 추가하면 udp 에 대해서도 어떤 포트가 열려있는지 확인할 수 있습니다.
+
+ss -nltp
+netstat -nltp
+[root@dothome-world ~]# ss -nltp
+State       Recv-Q Send-Q             Local Address:Port                            Peer Address:Port              
+LISTEN      0      128                            *:2022                                       *:*                   users:(("sshd",pid=3118,fd=3))
+LISTEN      0      100                    127.0.0.1:25                                         *:*                   users:(("master",pid=3383,fd=13))
+LISTEN      0      128                           :::2022                                      :::*                   users:(("sshd",pid=3118,fd=4))
+LISTEN      0      100                          ::1:25                                        :::*                   users:(("master",pid=3383,fd=14))
+[root@dothome-world ~]# netstat -nltp
+Active Internet connections (only servers)
+Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name    
+tcp        0      0 0.0.0.0:2022            0.0.0.0:*               LISTEN      3118/sshd           
+tcp        0      0 127.0.0.1:25            0.0.0.0:*               LISTEN      3383/master         
+tcp6       0      0 :::2022                 :::*                    LISTEN      3118/sshd           
+tcp6       0      0 ::1:25                  :::*                    LISTEN      3383/master       
+ - 현재 외부에서는 2022 포트가 열려있는 것으로 확인됩니다. 25 포트는 localhost 로 열려있어 외부에서는 확인이 안됩니다.
+
+​ifconfig
+
+ifconfig 명령어 문법은 아래와 같습니다.
+
+ifconfig [옵션] [인터페이스]
+
+​
+
+ifconfig 옵션은 아래와 같습니다.
+
+<인터페이스> up
+
+지정한 인터페이스 활성화
+
+<인터페이스> down
+
+지정한 인터페이스 비활성화
+
+inet <주소>
+
+지정한 인터페이스 IP 주소 설정
+
+netmask <주소>
+
+지정한 인터페이스 넷 마스크 설정
+
+ifconfig # 네트워크 인터페이스 정보 확인
+
+[root@dothome-world ~]# ifconfig
+eth0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+        inet 192.168.0.227  netmask 255.255.255.0  broadcast 192.168.0.255
+        inet6 fe80::2546:2957:53c:f3a3  prefixlen 64  scopeid 0x20<link>
+        ether 08:00:27:77:e5:e8  txqueuelen 1000  (Ethernet)
+        RX packets 3058  bytes 223814 (218.5 KiB)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 1278  bytes 1351004 (1.2 MiB)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+lo: flags=73<UP,LOOPBACK,RUNNING>  mtu 65536
+        inet 127.0.0.1  netmask 255.0.0.0
+        inet6 ::1  prefixlen 128  scopeid 0x10<host>
+        loop  txqueuelen 1000  (Local Loopback)
+        RX packets 76  bytes 8096 (7.9 KiB)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 76  bytes 8096 (7.9 KiB)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+​
+
+ifconfig eth0 # eth0 의 네트워크 인터페이스 정보 확인
+
+[root@dothome-world ~]# ifconfig eth0
+eth0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+        inet 192.168.0.227  netmask 255.255.255.0  broadcast 192.168.0.255
+        inet6 fe80::2546:2957:53c:f3a3  prefixlen 64  scopeid 0x20<link>
+        ether 08:00:27:77:e5:e8  txqueuelen 1000  (Ethernet)
+        RX packets 3095  bytes 226822 (221.5 KiB)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 1296  bytes 1354736 (1.2 MiB)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+​
+
+ifconfig eth0 down # eth0 네트워크 인터페이스 비활성화
+
+[root@dothome-world ~]# ifconfig eth0 down
+[root@dothome-world ~]# ifconfig
+lo: flags=73<UP,LOOPBACK,RUNNING>  mtu 65536
+        inet 127.0.0.1  netmask 255.0.0.0
+        inet6 ::1  prefixlen 128  scopeid 0x10<host>
+        loop  txqueuelen 1000  (Local Loopback)
+        RX packets 76  bytes 8096 (7.9 KiB)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 76  bytes 8096 (7.9 KiB)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+ifconfig eth0 up # eth0 네트워크 인터페이스 활성화
+
+[root@dothome-world ~]# ifconfig eth0 up
+[root@dothome-world ~]# ifconfig
+eth0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+        inet 192.168.0.227  netmask 255.255.255.0  broadcast 192.168.0.255
+        inet6 fe80::2546:2957:53c:f3a3  prefixlen 64  scopeid 0x20<link>
+        ether 08:00:27:77:e5:e8  txqueuelen 1000  (Ethernet)
+        RX packets 3095  bytes 226822 (221.5 KiB)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 1296  bytes 1354736 (1.2 MiB)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+lo: flags=73<UP,LOOPBACK,RUNNING>  mtu 65536
+        inet 127.0.0.1  netmask 255.0.0.0
+        inet6 ::1  prefixlen 128  scopeid 0x10<host>
+        loop  txqueuelen 1000  (Local Loopback)
+        RX packets 76  bytes 8096 (7.9 KiB)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 76  bytes 8096 (7.9 KiB)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+​
+
+ifconfig eth0 inet 192.168.0.228 netmask 255.255.255.0 # eth0 인터페이스 IP 및 넷 마스크 설정
+
+eth0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+        inet 192.168.0.228  netmask 255.255.255.0  broadcast 192.168.0.255
+        inet6 fe80::2546:2957:53c:f3a3  prefixlen 64  scopeid 0x20<link>
+        ether 08:00:27:77:e5:e8  txqueuelen 1000  (Ethernet)
+        RX packets 3123  bytes 230387 (224.9 KiB)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 1320  bytes 1357640 (1.2 MiB)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+ifconfig 명령어로 IP를 설정할 경우 재부팅하면 설정 전으로 되돌아갑니다.
+
+만약에 영구적으로 설정을 원하시면 /etc/sysconfig/network-scripts/ifcfg-eth0 파일에서 설정을 해줘야 합니다.
+
+ip
+
+ip 명령어의 사용 방법은 아래와 같습니다.
+
+ip [옵션] [오브젝트] [명령 옵션]
+
+​
+
+ip 명령어의 옵션은 아래와 같습니다.
+
+addr
+
+IP 주소에 관한 정보를 수정하거나 출력
+
+link
+
+네트워크 인터페이스의 상태를 관리하거나 출력
+
+route
+
+라우팅 테이블을 변경하거나 출력
+
+ip 명령어의 명령 옵션은 아래와 같습니다.
+
+add
+
+addr add : IP 주소 추가
+
+route add : 라우팅 테이블 추가
+
+del
+
+addr del : IP 주소 삭제
+
+route del : 라우팅 테이블 삭제
+
+set
+
+link set : 지정한 네트워크 인터페이스 상태 변경
+
+​
+
+ip addr # 네트워크 인터페이스 정보 확인
+
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host 
+       valid_lft forever preferred_lft forever
+2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
+    link/ether 08:00:27:77:e5:e8 brd ff:ff:ff:ff:ff:ff
+    inet 192.168.0.227/24 brd 192.168.0.255 scope global noprefixroute dynamic eth0
+       valid_lft 6774sec preferred_lft 6774sec
+​
+
+ip link # 네트워크 인터페이스 연결 여부 확인
+
+[root@dothome-world ~]# ip link
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN mode DEFAULT group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP mode DEFAULT group default qlen 1000
+    link/ether 08:00:27:77:e5:e8 brd ff:ff:ff:ff:ff:ff
+​
+
+ip route # 라우팅 테이블 확인
+
+[root@dothome-world ~]# ip route
+default via 192.168.0.1 dev eth0 proto dhcp metric 100 
+192.168.0.0/24 dev eth0 proto kernel scope link src 192.168.0.227 metric 100
+​
+
+ip addr add 192.168.0.234 dev eth0 # eth0 인터페이스에 관하여 IP 추가
+
+[root@dothome-world ~]# ip addr add 192.168.0.234 dev eth0
+[root@dothome-world ~]# ip addr
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host 
+       valid_lft forever preferred_lft forever
+2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
+    link/ether 08:00:27:77:e5:e8 brd ff:ff:ff:ff:ff:ff
+    inet 192.168.0.227/24 brd 192.168.0.255 scope global noprefixroute dynamic eth0
+       valid_lft 6389sec preferred_lft 6389sec
+    inet 192.168.0.234/32 scope global eth0
+       valid_lft forever preferred_lft forever
+​
+
+ip addr del 192.168.0.234 dev eth0 # eth0 인터페이스에 관하여 IP 제거
+
+[root@dothome-world ~]# ip addr del 192.168.0.234 dev eth0
+[root@dothome-world ~]# ip addr
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host 
+       valid_lft forever preferred_lft forever
+2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
+    link/ether 08:00:27:77:e5:e8 brd ff:ff:ff:ff:ff:ff
+    inet 192.168.0.227/24 brd 192.168.0.255 scope global noprefixroute dynamic eth0
+       valid_lft 6318sec preferred_lft 6318sec
+​
+
+ip route add 192.168.0.0/24 via 192.168.0.1 # eth0 인터페이스에 관하여 라우팅 테이블 추가
+
+[root@dothome-world ~]# ip route add 192.168.0.0/24 via 192.168.0.1
+[root@dothome-world ~]# ip route
+default via 192.168.0.1 dev eth0 proto dhcp metric 100 
+192.168.0.0/24 via 192.168.0.1 dev eth0 
+192.168.0.0/24 dev eth0 proto kernel scope link src 192.168.0.227 metric 100
+​
+
+ip route del 192.168.0.0/24 via 192.168.0.1 # eth0 인터페이스에 관하여 라우팅 테이블 제거
+
+[root@dothome-world ~]# ip route del 192.168.0.0/24 via 192.168.0.1
+[root@dothome-world ~]# ip route
+default via 192.168.0.1 dev eth0 proto dhcp metric 100 
+192.168.0.0/24 dev eth0 proto kernel scope link src 192.168.0.227 metric 100 
+​
+
+ip link set eth0 down # eth0 인터페이스 비활성화
+
+[root@dothome-world ~]# ip link set eth0 down
+[root@dothome-world ~]# ip addr
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host 
+       valid_lft forever preferred_lft forever
+2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
+    link/ether 08:00:27:77:e5:e8 brd ff:ff:ff:ff:ff:ff
+​
+
+ip link set eth0 up # eth0 인터페이스 활성화
+
+[root@dothome-world ~]# ip link set eth0 up
+[root@dothome-world ~]# ip addr
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host 
+       valid_lft forever preferred_lft forever
+2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
+    link/ether 08:00:27:77:e5:e8 brd ff:ff:ff:ff:ff:ff
+    inet 192.168.0.227/24 brd 192.168.0.255 scope global noprefixroute dynamic eth0
+       valid_lft 7199sec preferred_lft 7199sec
+ifconfig 명령어와 동일하게 ip 명령어로 IP 설정을 할 경우 재부팅 후에는 설정 전으로 되돌아갑니다.
+
+만약에 영구적으로 설정을 원하시면 /etc/sysconfig/network-scripts/ifcfg-eth0 파일에서 설정을 해줘야 합니다.
+
+ifup & ifdown
+
+ifup 명령어와 ifdown 명령어 사용 방법은 아래와 같습니다.
+
+ifup [인터페이스명]
+
+ifdown [인터페이스명]
+
+​
+
+ifup eth0​ # eth0 인터페이스 활성화
+
+[root@dothome-world ~]# ifup eth0
+[root@dothome-world ~]# ifconfig
+eth0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+        inet 192.168.0.227  netmask 255.255.255.0  broadcast 192.168.0.255
+        inet6 fe80::2546:2957:53c:f3a3  prefixlen 64  scopeid 0x20<link>
+        ether 08:00:27:77:e5:e8  txqueuelen 1000  (Ethernet)
+        RX packets 4253  bytes 322013 (314.4 KiB)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 1655  bytes 1405112 (1.3 MiB)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+lo: flags=73<UP,LOOPBACK,RUNNING>  mtu 65536
+        inet 127.0.0.1  netmask 255.0.0.0
+        inet6 ::1  prefixlen 128  scopeid 0x10<host>
+        loop  txqueuelen 1000  (Local Loopback)
+        RX packets 192  bytes 20076 (19.6 KiB)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 192  bytes 20076 (19.6 KiB)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+​
+
+ifdown eth0 # eth0 인터페이스 비활성화
+
+[root@dothome-world ~]# ifdown eth0
+[root@dothome-world ~]# ifconfig
+lo: flags=73<UP,LOOPBACK,RUNNING>  mtu 65536
+        inet 127.0.0.1  netmask 255.0.0.0
+        inet6 ::1  prefixlen 128  scopeid 0x10<host>
+        loop  txqueuelen 1000  (Local Loopback)
+        RX packets 192  bytes 20076 (19.6 KiB)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 192  bytes 20076 (19.6 KiB)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+ifdown 명령어는 사용하기 전에 비활성화할 네트워크 인터페이스가 맞는지 정확하게 확인 후 진행해 주셔야 합니다.
+
+ethtool
+
+ethtool 사용방법은 아래와 같습니다.
+
+ethtool [옵션] [인터페이스명] [파라미터]
+
+​
+
+​
+
+ethtool 옵션은 아래와 같습니다.
+
+-s
+
+인터페이스 설정
+
+ethtool 파라미터 값은 아래와 같습니다.
+
+speed 10|100|1000
+
+네트워크 인터페이스 속도 변경
+
+duplex half|full
+
+네트워크 인터페이스 전송 모드
+
+autoneg on|off
+
+네트워크 인터페이스 Auto-Negotiation 기능 on/off 여부
+
+ethtool eth0 # eth0 네트워크 인터페이스 설정 확인
+
+Settings for eth0:
+	Supported ports: [ TP ]
+	Supported link modes:   10baseT/Half 10baseT/Full 
+	                        100baseT/Half 100baseT/Full 
+	                        1000baseT/Full 
+	Supported pause frame use: No
+	Supports auto-negotiation: Yes
+	Supported FEC modes: Not reported
+	Advertised link modes:  10baseT/Half 10baseT/Full 
+	                        100baseT/Half 100baseT/Full 
+	                        1000baseT/Full 
+	Advertised pause frame use: No
+	Advertised auto-negotiation: Yes
+	Advertised FEC modes: Not reported
+	Speed: 1000Mb/s
+	Duplex: Full
+	Port: Twisted Pair
+	PHYAD: 0
+	Transceiver: internal
+	Auto-negotiation: on
+	MDI-X: off (auto)
+	Supports Wake-on: umbg
+	Wake-on: d
+	Current message level: 0x00000007 (7)
+			       drv probe link
+	Link detected: yes
+​
+
+ethtool -s eth0 speed 100 duplex half autoneg off 
+
+# eth0 인터페이스에 관하여 속도, 통신 방식, Auto-Negotiation 기능 설정​
+
+[root@dothome-world ~]# ethtool -s eth0 speed 100 duplex half autoneg off
+[root@dothome-world ~]# ethtool eth0
+Settings for eth0:
+	Supported ports: [ TP ]
+	Supported link modes:   10baseT/Half 10baseT/Full 
+	                        100baseT/Half 100baseT/Full 
+	                        1000baseT/Full 
+	Supported pause frame use: No
+	Supports auto-negotiation: Yes
+	Supported FEC modes: Not reported
+	Advertised link modes:  Not reported
+	Advertised pause frame use: No
+	Advertised auto-negotiation: No
+	Advertised FEC modes: Not reported
+	Speed: 1000Mb/s
+	Duplex: Full
+	Port: Twisted Pair
+	PHYAD: 0
+	Transceiver: internal
+	Auto-negotiation: off
+	MDI-X: off (auto)
+	Supports Wake-on: umbg
+	Wake-on: d
+	Current message level: 0x00000007 (7)
+			       drv probe link
+	Link detected: yes
+​
+
+ethtool -s eth0 speed 1000 duplex full
+
+# eth0 인터페이스에 관하여 속도, 통신 방식 설정​
+
+[root@dothome-world ~]# ethtool -s eth0 speed 1000 duplex full
+[root@dothome-world ~]# ethtool eth0
+Settings for eth0:
+	Supported ports: [ TP ]
+	Supported link modes:   10baseT/Half 10baseT/Full 
+	                        100baseT/Half 100baseT/Full 
+	                        1000baseT/Full 
+	Supported pause frame use: No
+	Supports auto-negotiation: Yes
+	Supported FEC modes: Not reported
+	Advertised link modes:  1000baseT/Full 
+	Advertised pause frame use: No
+	Advertised auto-negotiation: Yes
+	Advertised FEC modes: Not reported
+	Speed: 1000Mb/s
+	Duplex: Full
+	Port: Twisted Pair
+	PHYAD: 0
+	Transceiver: internal
+	Auto-negotiation: on
+	MDI-X: off (auto)
+	Supports Wake-on: umbg
+	Wake-on: d
+	Current message level: 0x00000007 (7)
+			       drv probe link
+	Link detected: yes
+해당 명령어는 네트워크 인터페이스 최적화나 네트워크 인터페이스 테스트 용도로도 많이 이용하는 명령어입니다.
+
+
+ping
+
+가장 기초가 되는 명령어는 ping입니다. ping 은 ICMP(Internet Control Message Protocol) 에코 요청을 목적지(서버, 네트워크 장비 등)에 보내고 목적지의 에코 응답을 받아서 네트워크의 상태를 확인하는 명령어입니다.
+
+윈도우를 사용 중이신 분들 역시 ping을 사용해본 분도 있을 것 같은데요.
+
+리눅스의 핑은 윈도우와 다르게 끄지 않는 한 계속 보내지는 것이 특징입니다. 윈도에서 핑을 계속 보낼 때는 ping -t 와 같이 -t를 옵션으로 지정하면 됩니다. 명령을 종료할 때는 Ctrl+c 하시면 됩니다. 
+
+명령어는 ping 아이피 또는 ping 도메인으로 할 수 있습니다. 
+
+root@dothome-world:~# ping 8.8.8.8
+PING 8.8.8.8 (8.8.8.8) 56(84) bytes of data.
+64 bytes from 8.8.8.8: icmp_seq=1 ttl=55 time=42.3 ms
+64 bytes from 8.8.8.8: icmp_seq=2 ttl=55 time=41.1 ms
+64 bytes from 8.8.8.8: icmp_seq=3 ttl=55 time=39.7 ms
+64 bytes from 8.8.8.8: icmp_seq=4 ttl=55 time=38.7 ms
+64 bytes from 8.8.8.8: icmp_seq=5 ttl=55 time=38.8 ms
+^C
+--- 8.8.8.8 ping statistics ---
+5 packets transmitted, 5 received, 0% packet loss, time 4006ms
+rtt min/avg/max/mdev = 38.768/40.195/42.388/1.423 ms
+구글 DNS 서버인 8.8.8.8로 ping을 보내 본 모습입니다.
+
+각각의 칸이 의미하는 바를 설명해 드리면
+
+64 bytes from 8.8.8.8: 구글 DNS 서버인 8.8.8.8에서 64 바이트의 응답
+
+icmp_seq=1: 첫 번째 icmp(ping) 신호, 숫자는 패킷의 일련번호
+
+ttl=55: Time To Live라고도 하며 쉽게 설명드리면 구글 DNS 서버와 몇 개의 다리를 건너서 통신했는지 알려줍니다. 64의 경우 한 개의 다리도 거치지 않았다는 뜻이니 55의 경우 약 9개 정도의 큰 다리를 건너 통신했습니다. ttl 은 목적지의 장비, OS의 종류에 따라서도 차이가 있을 수 있습니다. 
+
+time=42.3 ms : 내 서버 <-> 구글 DNS 서버 사이 2개의 신호가 왔다 갔을 때 얼마만큼의 시간이 흘렀는지에 대한 값입니다. 높으면 높을수록 느린 것이며 위치적으로도 멀리 떨어져 있는 것입니다. time이 평소와 달리 높게 나오면 네트워크 부하를 의심해 볼 수 있습니다. ms(millisecond)는 천분의 1초입니다. 
+
+5 packets transmitted, 5 received, 0% packet loss, time 4006ms : 패킷을 보내고 받은 수, 손실률(packet loss), ping을 시작하고 끝내기까지 걸린 시간입니다. 손실률은 패킷을 보냈는데 받지 못한 비율로 손실률이 0%로 나오는 것이 정상이며 0이 아니면 네크워크에 문제가 있는지 확인이 필요합니다. 
+
+rtt min/avg/max/mdev : time의 최솟값, 평균값, 최댓값, 표준편차를 말합니다. 
+
+[root@dothome-world ~]# ping 192.168.0.233
+PING 192.168.0.233 (192.168.0.233) 56(84) bytes of data.
+64 bytes from 192.168.0.233: icmp_seq=1 ttl=64 time=0.035 ms
+64 bytes from 192.168.0.233: icmp_seq=2 ttl=64 time=0.043 ms
+64 bytes from 192.168.0.233: icmp_seq=3 ttl=64 time=0.051 ms
+64 bytes from 192.168.0.233: icmp_seq=4 ttl=64 time=0.062 ms
+64 bytes from 192.168.0.233: icmp_seq=5 ttl=64 time=0.048 ms
+^C
+--- 192.168.0.233 ping statistics ---
+5 packets transmitted, 5 received, 0% packet loss, time 4005ms
+rtt min/avg/max/mdev = 0.035/0.047/0.062/0.012 ms
+비교를 위해 나 자신에게 ping 을 보내본 결과입니다. 아무것도 거치지 않았기 때문에 ttl 값에 차이가 있는 것으로 아실 수 있습니다. 
+
+​
+
+ping은 ICMP 에코 요청을 보내고 응답을 받는다고 하였는데요. 내 컴퓨터는 그렇다 쳐도 다른 사람의 컴퓨터에 ping 을 보내는데 상대방의 허락이 필요하지 않다는 것, 요청이 오면 응답을 할지 말지를 판단하지 않고 응답을 한다는 것은 문제가 될 수 있습니다. 이런 이유로 ICMP 가 디도스 같은 공격에 이용이 되는데요. 이러한 공격을 막고자 서버나 디도스 방어 장비 등에서 ICMP를 아예 작동하지 않게 하는 경우가 있습니다. 그래서 어떤 서버에 ping 을 보냈는데 응답이 없는 경우라도 반드시 네트워크에 문제가 있다고 말할 수는 없으니 이 점도 참고하세요. 
+
+​
+
+한 가지 더 말씀드리면 앞서 ttl에 대해 설명을 했었는데요. 이 ttl 이 도메인에 관련된 내용에서 다른 뜻을 가지고 있습니다. ttl 이 Time to live라는 것은 같은데 도메인에 대해 네임서버(DNS)에 등록된 정보를 수정하였을 때 수정된 사항이 전파되기까지 걸리는 시간으로 이해하실 수 있습니다. 예를 들어 PC에서 http://www.letshosting.co.kr/ 에 처음 접속을 하면 PC는 DNS에 letshosting.co.kr 에 대한 질문을 하게 되고 그 응답을 받아서 캐시에 저장을 합니다. ttl 이 3600 초로 되어 있다면 1시간 동안은 letshosing.co.kr 에 접속할 때 DNS에 물어보지 않아도 찾아갈 수 있는데 반대로 처음 접속하고 1시간 안에 DNS에서 도메인에 대한 정보가 변경되었다면 캐시가 삭제되기 전까지 도메인을 찾아가지 못하게 됩니다. ping에서 말한 ttl 과 DNS에서 말하는 ttl 이 다른다는 것은 기억해두시기 바랍니다. 
+
+traceroute
+
+traceroute라는 명령어는 윈도우에는 tracert라는 명령어로 존재하는데요.
+
+​
+
+명령어 그대로 통신이 될 때 어떻게 통신 되는지에 대해 알려줍니다. 명령어를 단어로 풀어보면 통신이 될 때 경로(route)를 밟아간다(trace)는 것입니다. 
+
+ping과 같이 traceroute 아이피, traceroute 도메인으로 사용할 수 있습니다. 
+
+[root@dothome-world ~]# traceroute 8.8.8.8
+traceroute to 8.8.8.8 (8.8.8.8), 30 hops max, 60 byte packets
+ 1  * * *
+ 2  125.141.*.* (125.141.*.*)  1.206 ms  1.191 ms  1.147 ms
+ 3  112.189.*.* (112.189.*.*)  38.755 ms 112.189.*.* (112.189.*.*)  12.399 ms 112.189.*.* (112.189.*.*)  1.015 ms
+ 4  112.189.*.* (112.189.*.*)  2.565 ms 112.189.*.* (112.189.*.*)  1.889 ms 112.189.*.* (112.189.*.*)  3.729 ms
+ 5  * * *
+ 6  112.174.*.* (112.174.*.*)  4.965 ms 112.174.*.* (112.174.*.*)  1.730 ms 112.174.*.* (112.174.*.*)  1.474 ms
+ 7  72.14.*.* (72.14.*.*)  30.631 ms  35.946 ms  30.561 ms
+ 8  108.170.*.* (108.170.*.*)  31.889 ms 108.170.*.* (108.170.*.*)  33.555 ms  33.018 ms
+ 9  108.170.*.* (108.170.*.*)  31.670 ms 108.170.*.* (108.170.*.*)  32.353 ms 108.170.*.* (108.170.*.*)  32.394 ms
+10  google-public-dns-a.google.com (8.8.8.8)  31.714 ms  36.986 ms  32.456 ms
+ping을 테스트해봤을 때와 똑같이 구글 서버로 traceroute 명령을 보내 보았습니다.
+
+개인 정보 보호를 위해서 뒤에 두 자리는 *.*로 마스킹 했습니다.
+
+​
+
+이런 식으로 경로가 나타나게 되는데요.
+
+중간에 * * *로 뜨는 구간들은 해당 네트워크 장비가 ICMP을 허용해두지 않은 경우입니다. 즉 traceroute 도 ping 과같이 ICMP를 이용하는 것입니다. 보다 정확히는 UDP로 요청을 하고 ICMP로 응답을 받습니다. 이 점에서 윈도우에서 사용하는 tracert 와 다른데요. tracert는 ICMP로 요청하고 ICMP로 응답을 받습니다. 
+
+traceroute는 위에 ping에서 알려드린 TTL 값을 1부터 시작해서 1씩 늘려가면서 알아가는 것이기 때문에 시간이 조금 소요됩니다.
+
+​
+
+traceroute 결과에서 중간에 어떤 구간에서 ms의 값이 높게 나오는 경우에는 해당 구간에서 네크워크에
+
+문제가 있는 것입니다. 
+
+​
+
+이 traceroute 명령어로 특정 서버와 통신이 안될 때 어디 구간에서 안되는지 파악하는데 큰 지표가 됩니다.
+
+해외 서버와 통신이 이상하게 느리다면 traceroute로 경로를 추적해 보시면 좋은 길 놔두고 빙빙 돌아가는 경우도 있으니 네트워크 환경에 관련하여 테스트할 때 좋은 명령어입니다.
+
+​
+
+nmap
+
+세 번째 명령어는 nmap입니다. 이 명령어는 원격지에 있는 서버에 어떤 포트가 열려 있는지 알아내는 명령어입니다.
+
+간혹 해킹 툴로써 소개되는 경우도 있는데요. 기능 자체가 상대방이 알지 못하게끔 하는 옵션들이 많아서 그런 것 같습니다. 단순히 어떤 포트가 열려있는지 뿐만 아니라 운영체제는 무엇인지까지도 알 수 있으니 그렇게 취급될 만합니다.
+
+​
+
+nmap 이 설치되어 있지 않으면 아래와 같이 설치를 해주어야 합니다. 
+
+설치 전에는 command not found로 나오는데 설치 후에는 명령어만 쳐도 사용법을 알려주네요. nmap 은 다양한 옵션이 있는데요. man nmap으로 옵션을 확인해보실 수 있습니다. ​
+
+[root@dothome-world ~]# nmap
+-bash: nmap: command not found
+[root@localhost ~]# yum install -y nmap
+--------------- 생략 -------------------
+=============================================================================================
+ Package               Arch               Version                     Repository        Size
+=============================================================================================
+Installing:
+ nmap                  x86_64             2:6.40-16.el7               base             3.9 M
+Installing for dependencies:
+ nmap-ncat             x86_64             2:6.40-16.el7               base             206 k
+
+Transaction Summary
+=============================================================================================
+Install  1 Package (+1 Dependent package)
+--------------- 생략 -------------------
+Installed:
+  nmap.x86_64 2:6.40-16.el7                                                                  
+
+Dependency Installed:
+  nmap-ncat.x86_64 2:6.40-16.el7                                                             
+
+Complete!
+[root@letshosting ~]# nmap
+Nmap 6.40 ( http://nmap.org )
+Usage: nmap [Scan Type(s)] [Options] {target specification}
+TARGET SPECIFICATION:
+  Can pass hostnames, IP addresses, networks, etc.
+  Ex: scanme.nmap.org, microsoft.com/24, 192.168.0.1; 10.0.0-255.1-254
+  -iL <inputfilename>: Input from list of hosts/networks
+  -iR <num hosts>: Choose random targets
+  --exclude <host1[,host2][,host3],...>: Exclude hosts/networks
+  --excludefile <exclude_file>: Exclude list from file
+--------------- 생략 -------------------
+ MISC:
+  -6: Enable IPv6 scanning
+  -A: Enable OS detection, version detection, script scanning, and traceroute
+  --datadir <dirname>: Specify custom Nmap data file location
+  --send-eth/--send-ip: Send using raw ethernet frames or IP packets
+  --privileged: Assume that the user is fully privileged
+  --unprivileged: Assume the user lacks raw socket privileges
+  -V: Print version number
+  -h: Print this help summary page.
+EXAMPLES:
+  nmap -v -A scanme.nmap.org
+  nmap -v -sn 192.168.0.0/16 10.0.0.0/8
+  nmap -v -iR 10000 -Pn -p 80
+SEE THE MAN PAGE (http://nmap.org/book/man.html) FOR MORE OPTIONS AND EXAMPLES
+​
+
+nmap 뒤에 어떤 포트가 열려있는지 알아내고 싶은 서버의 ip나 dns 주소를 적어주시면 됩니다.
+
+테스트로 자기 자신인 localhost를 입력했을 때 나오는 결과입니다.
+
+[root@dothome-world ~]# nmap localhost
+
+Starting Nmap 6.40 ( http://nmap.org ) at 2019-05-19 09:59 KST
+Nmap scan report for localhost (127.0.0.1)
+Host is up (0.0000030s latency).
+Other addresses for localhost (not scanned): 127.0.0.1
+Not shown: 995 closed ports
+PORT     STATE SERVICE
+21/tcp   open  ftp
+25/tcp   open  smtp
+80/tcp   open  http
+443/tcp  open  https
+3306/tcp open  mysql
+
+Nmap done: 1 IP address (1 host up) scanned in 0.10 seconds
+현재 서버에 어떤 포트가 열려 있는지 알려주는 모습입니다.
+
+이 서버에는 ftp 사용 포트인 21, 메일에 사용되는 25 포트, 웹서버를 위한 80,443 포트, Mysql 사용 포트인 3306 포트가 열려 있다고 나오네요.
+
+​
+
+외부에서 테스트 서버로 열린 포트를 확인하겠습니다. 
+
+[root@dothome-world ~]# nmap 192.168.0.233
+
+Starting Nmap 7.60 ( https://nmap.org ) at 2019-05-19 10:18 KST
+Nmap scan report for 192.168.0.233
+Host is up (0.0016s latency).
+Not shown: 996 closed ports
+PORT     STATE SERVICE
+21/tcp   open  ftp
+80/tcp   open  http
+443/tcp  open  https
+3306/tcp open  mysql
+
+Nmap done: 1 IP address (1 host up) scanned in 0.15 seconds
+25 포트는 로컬에서는 열려 있지만 외부로는 열려 있지 않은 것을 알 수 있습니다. 
+
+​
+
+이 명령어는 상대방 서버에서 내 서버로 특정 포트에 통신이 안되는 경우, 또는 그 반대의 상황인 경우에서 nmap 명령어를 통해서 실제로 프로세스가 작동해서 해당 포트를 열어두고 있는지, 최종적으로 방화벽에서 막히지 않았는지 확인하는 가장 좋은 방법입니다. 그럼에도 해킹에 이용될 수 있는 다양한 기능이 있으니 다른 서버에 nmap 명령어를 남발하면 문제가 될 수 있습니다. 테스트는 내가 관리하는 서버에만 해주세요. 
+
+
+이더넷 정보 확인
+
+먼저 lspci 명령어로 이더넷 장치를 확인해보겠습니다. 
+
+lspci 명령어는 PCI 장치의 list를 보여주는 명령입니다. PCI 장치는 메인보드에 장착되는 주변 장치입니다 
+
+lspci 명령어가 작동하지 않으면 아래와 같이 pciutils를 설치해주어야 합니다. 
+
+[root@letshosting ~]# lspci
+-bash: lspci: command not found
+[root@letshosting ~]# yum install pciutils
+Loaded plugins: fastestmirror
+--------------- 생략 ---------------
+Dependencies Resolved
+======================================================================================================================================
+ Package                         Arch                          Version                              Repository                   Size
+======================================================================================================================================
+Installing:
+ pciutils                        x86_64                        3.5.1-3.el7                          base                         93 k
+Transaction Summary
+======================================================================================================================================
+Install  1 Package
+--------------- 생략 ---------------
+Installed:
+  pciutils.x86_64 0:3.5.1-3.el7                                                                                                                                                         
+Complete!
+​
+
+lspci 만 실행하면 pci 장치 전부를 보여줍니다. 
+
+[root@letshosting ~]# lspci
+00:00.0 Host bridge: Intel Corporation 440FX - 82441FX PMC [Natoma] (rev 02)
+00:01.0 ISA bridge: Intel Corporation 82371SB PIIX3 ISA [Natoma/Triton II]
+-------------  생략 -----------------
+00:0d.0 SATA controller: Intel Corporation 82801HM/HEM (ICH8M/ICH8M-E) SATA Controller [AHCI mode] (rev 02)
+​
+
+grep으로 이더넷 장치만 확인할 수 있습니다. 인텔의 기가 랜카드인 것을 확인할 수 있습니다. 
+
+[root@letshosting ~]# lspci | grep -i Ethernet
+00:03.0 Ethernet controller: Intel Corporation 82540EM Gigabit Ethernet Controller (rev 02)
+​
+
+한편 ifconfig 또는 ip addr로 이더넷 장치명을 확인한 후 ethtool 명령어로 네트워트 장치의 드라이버와 설정을 확인할 수 있습니다. 
+
+[root@letshosting ~]# ifconfig
+enp0s3: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+------------  생략 ---------------
+[root@letshosting ~]# ip addr
+------------  생략 ---------------
+2: enp0s3: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
+------------  생략 ---------------
+[root@letshosting ~]# ethtool enp0s3
+Settings for enp0s3:
+	Supported ports: [ TP ]
+	Supported link modes:   10baseT/Half 10baseT/Full 
+	                        100baseT/Half 100baseT/Full 
+	                        1000baseT/Full 
+	------------  생략 ---------------
+	Advertised pause frame use: No
+	Advertised auto-negotiation: Yes
+	Advertised FEC modes: Not reported
+	Speed: 1000Mb/s
+	Duplex: Full
+	Port: Twisted Pair
+	------------  생략 ---------------
+	Link detected: yes
+Supported link modes의 내용으로 10, 100, 1000Mb/s의 속도를 지원하고 Speed의 내용으로 1000Mb/s로 연결되어 있는 것을 확인할 수 있습니다. 
+
+​
+
+lspci 명령어로 다른 장치도 확인할 수 있으며 ethtool로 이더넷 장치의 속도 등을 변경할 수 있지만, 여기서는 이더넷 정보를 확인하는 방법만 간단히 살펴보았습니다. 
+
+​
+
+시스템 정보 확인
+
+시스템 하드웨어의 정보는 dmidecode 명령어로 확인할 수 있습니다. dmidecode는 DMI 테이블에 있는 정보를 풀어(decode)서 보여주는 명령어입니다. 
+
+DMI는 Desktop Management Interface의 약자로 테스크탑뿐만 아니라 노트북, 서버에서 구성 요소를 관리하고 추적하는 인터페이스입니다. 
+
+​
+
+사용법은 dmidecode 옵션 입니다. 옵션 없이 실행하면 모든 정보를 보여줍니다. 
+
+[root@letshosting ~]# dmidecode
+# dmidecode 3.1
+Getting SMBIOS data from sysfs.
+SMBIOS 2.5 present.
+10 structures occupying 450 bytes.
+Table at 0x000E1000.
+------------  이하 생략 ------------
+​
+
+-t 옵션으로 하면 아래와 같이 타입을 보여줍니다. 타입 중에서 system 정보를 출력한 결과입니다. 
+
+[root@letshosting ~]# dmidecode -t
+dmidecode: option requires an argument -- 't'
+Type number or keyword expected
+Valid type keywords are:
+  bios
+  system
+  baseboard
+  chassis
+  processor
+  memory
+  cache
+  connector
+  slot
+[root@letshosting ~]# dmidecode -t system
+# dmidecode 3.1
+Getting SMBIOS data from sysfs.
+SMBIOS 2.5 present.
+
+Handle 0x0001, DMI type 1, 27 bytes
+System Information
+	Manufacturer: innotek GmbH
+	Product Name: VirtualBox
+	Version: 1.2
+	Serial Number: 0
+	UUID: 571e72a6-c32e-4a0c-b214-c2539659a5dd
+	Wake-up Type: Power Switch
+	SKU Number: Not Specified
+	Family: Virtual Machine
+virtual box로 작업을 하고 있어서 Product Name이 Virtual Box라고 나오는 것을 확인할 수 있습니다.
+
+​
+
+-s 옵션은 문자열(string)로 확인할 수 있는 옵션입니다. 
+
+-t 와 같이 -s 옵션만 주고 실행하면 사용할 수 있는 string을 보여줍니다. string 중에 bios-version 을 확인한 결과입니다. 
+
+[root@letshosting ~]# dmidecode -s
+dmidecode: option requires an argument -- 's'
+String keyword expected
+Valid string keywords are:
+  bios-vendor
+  bios-version
+  bios-release-date
+  system-manufacturer
+  system-product-name
+  system-version
+  system-serial-number
+  system-uuid
+  system-family
+  baseboard-manufacturer
+  baseboard-product-name
+  baseboard-version
+  baseboard-serial-number
+  baseboard-asset-tag
+  chassis-manufacturer
+  chassis-type
+  chassis-version
+  chassis-serial-number
+  chassis-asset-tag
+  processor-family
+  processor-manufacturer
+  processor-version
+  processor-frequency
+[root@localhost ~]# dmidecode -s bios-version
+VirtualBox
+​
+
+가상환경에서는 dmidecode로 확인을 하는 것이 큰 의미가 없고 정보가 나오지 않는 경우도 있습니다. 
+
+그래서 매뉴얼을 작성하고 있는 민트가 설치된 PC에서 확인한 내용을 보여드리겠습니다.
+
+CPU가 어떤 것인지 보드의 제조사가 어떤 것인지 정확하게 확인할 수 있습니다. 
+
+[root@letshosting ~]# dmidecode -t processor
+# dmidecode 3.1
+Getting SMBIOS data from sysfs.
+SMBIOS 3.0.0 present.
+
+Handle 0x0046, DMI type 4, 48 bytes
+Processor Information
+	Socket Designation: U3E1
+	Type: Central Processor
+	Family: Pentium
+	Manufacturer: Intel(R) Corporation
+------------- 생략 -----------------
+	Version: Intel(R) Pentium(R) CPU G4600 @ 3.60GHz
+	Voltage: 1.0 V
+	External Clock: 100 MHz
+	Max Speed: 8300 MHz
+	Current Speed: 3600 MHz
+------------- 이하 생략 -----------------
+
+[root@localhost ~]# dmidecode -s baseboard-manufacturer
+Gigabyte Technology Co., Ltd.
+​
+
+한편 이더넷 정보를 /etc/ 폴더 아래에 있는 파일의 내용으로 확인한 것과 같이 일부 시스템의 정보는 /proc 폴더 아래에 있는 파일로 확인을 할 수 있습니다. 
+
+/proc 폴더 아래에는 시스템의 여러 정보들이 파일 형태로 존재합니다. 
+
+[root@letshosting ~]# ll /proc/
+합계 0
+dr-xr-xr-x  9 root    root                  0  5월 25 00:52 1
+dr-xr-xr-x  9 root    root                  0  5월 25 00:52 10
+dr-xr-xr-x  9 root    root                  0  5월 25 00:52 1076
+------------ 생략 --------------
+-r--r--r--  1 root    root                  0  5월 25 04:52 cpuinfo
+-r--r--r--  1 root    root                  0  5월 25 04:52 crypto
+-r--r--r--  1 root    root                  0  5월 25 04:52 devices
+------------ 생략 --------------
+-r--r--r--  1 root    root                  0  5월 25 04:52 mdstat
+-r--r--r--  1 root    root                  0  5월 25 04:52 meminfo
+------------ 생략 --------------
+-r--r--r--  1 root    root                  0  5월 25 04:52 uptime
+-r--r--r--  1 root    root                  0  5월 25 04:52 version
+-r--------  1 root    root                  0  5월 25 04:52 vmallocinfo
+-r--r--r--  1 root    root                  0  5월 25 04:52 vmstat
+-r--r--r--  1 root    root                  0  5월 25 04:52 zoneinfo
+​
+
+몇 가지 정보를 파일의 내용을 확인해보겠습니다. 
+
+먼저 CPU의 정보입니다. 
+
+[root@letshosting ~]# cat /proc/cpuinfo 
+processor	: 0
+vendor_id	: GenuineIntel
+cpu family	: 6
+model		: 158
+model name	: Intel(R) Pentium(R) CPU G4600 @ 3.60GHz
+stepping	: 9
+cpu MHz		: 3599.998
+cache size	: 3072 KB
+-------------- 이하 생략 -----------------
+​
+
+메모리의 정보입니다. 
+
+이 파일에서는 현재 실시간으로 사용 중인 메모리의 상태까지 보여줍니다. 
+
+[root@letshosting ~]# cat /proc/meminfo 
+MemTotal:        1014972 kB
+MemFree:          320328 kB
+MemAvailable:     373492 kB
+Buffers:            2108 kB
+Cached:           165080 kB
+SwapCached:            0 kB
+Active:           461688 kB
+Inactive:         143076 kB
+Active(anon):     437808 kB
+Inactive(anon):     6860 kB
+-------------- 이하 생략 -----------------
+​
+
+어떤 타입의 하드디스크를 사용하는지 확인해보겠습니다. 
+
+scsi 파일을 열어서 레이드 컨트롤러를 사용하는지도 확인을 할 수 있습니다. 
+
+virtual box의 가상 서버에서 확인한 것과 실제 PC에서 확인한 결과입니다. 
+
+실제 PC에서 SSD 하드디스크를 사용하고 있는 것을 확인할 수 있습니다. 
+
+[root@letshosting ~]# cat /proc/scsi/scsi
+Attached devices:
+Host: scsi1 Channel: 00 Id: 00 Lun: 00
+  Vendor: VBOX     Model: CD-ROM           Rev: 1.0 
+  Type:   CD-ROM                           ANSI  SCSI revision: 05
+Host: scsi2 Channel: 00 Id: 00 Lun: 00
+  Vendor: ATA      Model: VBOX HARDDISK    Rev: 1.0 
+  Type:   Direct-Access                    ANSI  SCSI revision: 05
+[root@letshosting ~]# cat /proc/scsi/scsi
+Attached devices:
+Host: scsi0 Channel: 00 Id: 00 Lun: 00
+  Vendor: ATA      Model: INTEL SSDSC2BW12 Rev: DC32
+  Type:   Direct-Access                    ANSI  SCSI revision: 05
+하드디스크 정보 확인
+
+설명을 하다 보니 /proc 폴더에 있는 파일로 어떤 하드 디스크를 사용하는지를 먼저 알아보게 되었는데요. 이어서 하드디스크에 관련된 정보를 확인하는 방법을 알아보겠습니다. 
+
+​
+
+lsscsi 명령어는 SCSI 장비의 목록을 보여주는 명령어입니다. 
+
+scsi 파일의 내용보다 /dev/sda라는 장치명을 추가로 알려줍니다. 
+
+/dev/sda로 하나의 하드디스크를 사용하고 있는 것을 알 수 있습니다. 
+
+두 번째 하드가 있다면 /dev/sdb로 나오게 됩니다. 
+
+[root@letshosting ~]# lsscsi
+[1:0:0:0]    cd/dvd  VBOX     CD-ROM           1.0   /dev/sr0 
+[2:0:0:0]    disk    ATA      VBOX HARDDISK    1.0   /dev/sda 
+​
+
+smartctl 명령어는 하드디스크를 점검하는 명령어입니다. 
+
+설치가 되어 있지 않다면 smartmontool 을 설치해주여야 합니다. 
+
+[root@letshosting ~]# yum install smartmontools
+Loaded plugins: fastestmirror
+-------------- 생략 -----------------
+=========================================================================================
+ Package                  Arch              Version                Repository       Size
+=========================================================================================
+Installing:
+ smartmontools            x86_64            1:6.5-1.el7            base            460 k
+Installing for dependencies:
+ mailx                    x86_64            12.5-19.el7            base            245 k
+
+Transaction Summary
+=========================================================================================
+Install  1 Package (+1 Dependent package)
+-------------- 생략 -----------------
+Installed:
+  smartmontools.x86_64 1:6.5-1.el7                                                       
+Dependency Installed:
+  mailx.x86_64 0:12.5-19.el7                                                             
+Complete!
+​
+
+하드디스크를 점검하는 유용한 도구입니다만, 여기서는 하드디스크의 정보를 확인하는 용도로 설명하겠습니다.
+
+-a는 모든 정보를 출력하라는 옵션입니다. 
+
+나온 결과 중에서 = START OF INFORMATION SECTION = 항목에서 하드디스크의 자세한 정보를 알 수 있습니다. 
+
+​
+
+실제 PC에서 확인한 결과입니다. 
+
+[root@letshosting ~]# smartctl -a /dev/sda
+smartctl 6.6 2016-05-31 r4324 [x86_64-linux-4.15.0-50-generic] (local build)
+Copyright (C) 2002-16, Bruce Allen, Christian Franke, www.smartmontools.org
+
+=== START OF INFORMATION SECTION ===
+Model Family:     Intel 53x and Pro 2500 Series SSDs
+Device Model:     INTEL SSDSC2BW120A4
+Serial Number:    CVDA510402VS1207GN
+LU WWN Device Id: 5 5cd2e4 04bf794f1
+Firmware Version: DC32
+User Capacity:    120,034,123,776 bytes [120 GB]
+Sector Size:      512 bytes logical/physical
+Rotation Rate:    Solid State Device
+Device is:        In smartctl database [for details use: -P show]
+ATA Version is:   ACS-2 (minor revision not indicated)
+SATA Version is:  SATA 3.0, 6.0 Gb/s (current: 6.0 Gb/s)
+Local Time is:    Sat May 25 06:51:15 2019 KST
+SMART support is: Available - device has SMART capability.
+SMART support is: Enabled
+
+=== START OF READ SMART DATA SECTION ===
+-------------- 이하 생략 -----------------
+
+===================파티션 생성하기
+
+서버에 73GB 디스크를 통으로 파티션 생성을 하여 /dot 경로에 마운트를 하려고 합니다.
+
+​
+
+먼저, fdisk -l 명령어를 이용하여 현재 디스크 현황과 파티션 현황을 확인하겠습니다.
+
+fdisk -l
+[root@dothome-world ~]# fdisk -l
+
+Disk /dev/sda: 300.0 GB, 299966445568 bytes, 585871964 sectors
+Units = sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disk label type: dos
+Disk identifier: 0x000be9c8
+
+   Device Boot      Start         End      Blocks   Id  System
+/dev/sda1   *        2048     2099199     1048576   83  Linux
+/dev/sda2         2099200    23070719    10485760   82  Linux swap / Solaris
+/dev/sda3        23070720   585871359   281400320   83  Linux
+
+Disk /dev/sdb: 3000.5 GB, 3000513552384 bytes, 5860378032 sectors
+Units = sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+
+
+Disk /dev/sdc: 73.4 GB, 73372631040 bytes, 143305920 sectors
+Units = sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disk label type: dos
+Disk identifier: 0x00036e7b
+
+   Device Boot      Start         End      Blocks   Id  System
+현재 /dev/sdb, /dev/sdc 디스크에는 아무런 파티션이 없는 상태인 것을 확인할 수 있습니다.
+
+(/dev/sda 는 OS 가 설치된 디스크입니다.)
+
+​
+
+​
+
+fdisk 명령어를 통해 /dev/sdc 디스크에 파티션 설정을 진행하겠습니다.
+
+fdisk /dev/sdc
+[root@dothome-world ~]# fdisk /dev/sdc
+Welcome to fdisk (util-linux 2.23.2).
+
+Changes will remain in memory only, until you decide to write them.
+Be careful before using the write command.
+
+
+Command (m for help): 
+해당 명령어를 이용하여 디스크를 관리할 수 있는 모드로 진입할 수 있습니다. 이 안에서는 어떠한 작업을 해도 쓰기(w)만 하지 않는다면 실제 디스크 설정에 영향을 주지 않습니다.
+
+어떤 명령어가 있는지 확인하는 방법은 m 을 입력하시면 됩니다.
+
+​
+
+​
+
+n 을 입력하여 새로운 파티션을 생성하겠습니다.
+
+Command (m for help): n
+Partition type:
+   p   primary (0 primary, 0 extended, 4 free)
+   e   extended
+Select (default p): 
+통으로 1개의 파티션을 만들거니 p 를 입력하겠습니다.
+
+ - p : 주 파티션
+
+ - e : 확장 파티션
+
+​
+
+​
+
+파티션 번호를 설정하는 단계입니다. 특별한 경우가 아니라면 기본값으로 넘어갑니다. 1을 입력하시거나 엔터로 넘어갈 수 있습니다.
+
+Partition number (1-4, default 1): 
+​
+
+​
+
+첫으로 시작할 섹터를 지정할 수 있습니다. 이 역시 기본 값으로 넘어가겠습니다. 엔터로 넘어가겠습니다.
+
+First sector (2048-143305919, default 2048): 
+Using default value 2048
+​
+
+​
+
+마지막으로 끝날 섹터를 지정할 수 있습니다. 이 단계에서 파티션의 용량을 설정할 수 있습니다. 저는 통으로 파티션으로 생성을 할거므로 기본 값인 마지막 섹터까지 사용하겠습니다. 
+
+용량을 지정하신다면 +sectors or +size{K,M,G} 를 입력하여 파티션 용량을 지정할 수 있습니다.
+
+​
+
+<통으로 파티션 잡기>
+
+Last sector, +sectors or +size{K,M,G} (2048-143305919, default 143305919): 
+Using default value 143305919
+Partition 1 of type Linux and of size 68.3 GiB is set
+엔터만 눌러주면 기본값이 적용됩니다.
+
+​
+
+<50G 만 파티션 잡기>
+
+Last sector, +sectors or +size{K,M,G} (2048-143305919, default 143305919): +50G
+Partition 1 of type Linux and of size 50 GiB is set
+​
+
+​
+
+이제 파티션이 정상적으로 등록되었는지 p 를 입력하여 확인하겠습니다.
+
+Disk /dev/sdc: 73.4 GB, 73372631040 bytes, 143305920 sectors
+Units = sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disk label type: dos
+Disk identifier: 0x00036e7b
+
+   Device Boot      Start         End      Blocks   Id  System
+/dev/sdc1            2048   143305919    71651936   83  Linux
+지금까지 설정된 파티션 현황을 볼 수 있습니다.
+
+​
+
+​
+
+마지막으로 w 를 입력하여 파티션 정보를 디스크에 쓰는 작업을 해야 합니다.
+
+w 를 입력하는 순간 바로 적용되며, 파티션 작업을 해야 되지 말아야 할 디스크에서 작업을 하셨다면 q 를 입력하여 저장 없이 나갈 수 있습니다.
+
+​
+
+<파티션 정보를 디스크에 쓰기>
+
+Command (m for help): w
+The partition table has been altered!
+
+Calling ioctl() to re-read partition table.
+Syncing disks.
+​
+
+<파티션 정보를 저장 없이 나가기>
+
+Command (m for help): q
+fdisk -l 명령어를 입력하면 파티션 정보가 그대로인 것을 확인할 수 있다.
+
+​
+
+파일 시스템 생성하기
+
+파티션 작업이 끝났다면 이제 해당 파티션에 파일 시스템을 생성하겠습니다.
+
+CentOS 7 의 경우 기본 파일 시스템은 xfs 이며, CentOS 6 에서는 ext4 입니다.
+
+​
+
+먼저, 어떤 파티션에 파일 시스템을 생성할지 확인하기 위해 fdisk -l 명령어를 통해 확인하겠습니다.
+
+fdisk -l
+[root@dothome-world ~]# fdisk -l
+. . .
+Disk /dev/sdc: 73.4 GB, 73372631040 bytes, 143305920 sectors
+Units = sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disk label type: dos
+Disk identifier: 0x00036e7b
+
+   Device Boot      Start         End      Blocks   Id  System
+/dev/sdc1            2048   143305919    71651936   83  Linux
+파티션 생성이 된 /dev/sdc1 를 확인할 수 있다.
+
+​
+
+​
+
+mkfs 명령어를 이용하여 /dev/sdc1 파티션에 xfs 파일 시스템을 생성하겠습니다.
+
+mkfs -t xfs -d name=/dev/sdc1
+
+or
+
+mkfs.xfs /dev/sdc1
+[root@dothome-world ~]# mkfs -t xfs -d name=/dev/sdc1
+meta-data=/dev/sdc1              isize=512    agcount=4, agsize=4478246 blks
+         =                       sectsz=512   attr=2, projid32bit=1
+         =                       crc=1        finobt=0, sparse=0
+data     =                       bsize=4096   blocks=17912984, imaxpct=25
+         =                       sunit=0      swidth=0 blks
+naming   =version 2              bsize=4096   ascii-ci=0 ftype=1
+log      =internal log           bsize=4096   blocks=8746, version=2
+         =                       sectsz=512   sunit=0 blks, lazy-count=1
+realtime =none                   extsz=4096   blocks=0, rtextents=0
+Tip.
+
+​
+
+파일 시스템 생성 시 이미 파일 시스템이 존재한다고 표시되면 -f 옵션으로 강제로 생성할 수 있습니다.
+
+​
+
+[root@dothome-world ~]# mkfs -t xfs -d name=/dev/sdc1
+
+mkfs.xfs: /dev/sdc1 appears to contain an existing filesystem (ext4).
+
+mkfs.xfs: Use the -f option to force overwrite.
+
+​
+
+마운트 하기
+
+마지막으로 파일 시스템 생성까지 완료된 /dev/sdc1 를 /dot 경로에 마운트를 하겠습니다.
+
+​
+
+정상 적으로 파일 시스템이 생성되어있는지는 fsck -N  명령어를 통해 확인하겠습니다.
+
+fsck -N /dev/sdc1
+[root@dothome-world ~]# fsck -N /dev/sdc1
+fsck from util-linux 2.23.2
+[/sbin/fsck.xfs (1) -- /dev/sdc1] fsck.xfs /dev/sdc1 
+xfs 파일 시스템이 있는 것을 확인할 수 있다.
+
+​
+
+​
+
+​
+
+/dev/sdc1 파티션을 /dot 경로에 마운트를 하겠습니다. 마운트 할 경로에 폴더가 없으면 먼저 생성해주세요.
+
+mount /dev/sdc1 /dot
+[root@dothome-world ~]# mount /dev/sdc1 /dot
+​
+
+​
+
+이제, 정상 적으로 마운트가 되어있는지 확인하기 위해 mount 명령어로 확인하겠습니다.
+
+mount | grep "sdc1"
+[root@dothome-world ~]# mount | grep "sdc1"
+/dev/sdc1 on /dot type xfs (rw,relatime,attr2,inode64,noquota)
+​
+
