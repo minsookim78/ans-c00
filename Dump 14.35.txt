@@ -482,4 +482,169 @@ Answer: B
 This case requires only a configuration change trigger because you only need to trigger when
 S3 buckets are created and changed. There is no time component to when the trigger needs
 to fire.
+구성 변경 트리거를 사용하는 규칙 예
+계정에 AWS Config 관리형 규칙인 S3_BUCKET_LOGGING_ENABLED를 추가하여 Amazon S3 버킷에 로깅이 활성화되어 있는지 확인합니다.
+이 규칙의 트리거 유형은 구성 변경입니다. AWS Config;는 Amazon S3 버킷이 생성, 변경 또는 삭제되면 이 규칙에 대한 평가를 실행합니다.
+버킷이 업데이트되면 구성 변경은 규칙을 트리거하고 AWS Config는 해당 버킷이 규칙을 준수하는지 여부를 평가합니다.
 
+NO.55 Select the VPC Peering statement below that is NOT true
+A. VPC peering supports transitive peering relationships for IPv6 traffic but not IPv4
+B. VPC peering can be performed between VPCs in different AWS accounts in the same region
+C. TCP connections can be performed between peered VPCs
+D. UDP connections can be performed between peered VPCs
+Answer: A
+Explanation:
+VPC peering supports transitive peering relationships for IPv4 and IPv6 traffic Reference:
+http:/ /docs.aws.amazon.com/AmazonVPC/ latest/PeeringGuide/vpc-peering- basics.html#vpc
+- peering-limitations
+VPC peering does not support transitive peering relationships. 
+
+NO.56 What port and protocol is used by DNS?
+Choose the correct answer:
+A. 80/TCP
+B. 22/TCP
+C. 80/TCP and UDP
+D. 53/TCP and UDP
+Answer: D
+Explanation:
+DNS uses port 53 and either TCP or UDP depending on what type of DNS message is being sent.
+
+
+NO.57 You have just deployed a website that utilizes CloudFront, ELB, and S3 to serve content.
+When users access your site, they are seeing broken image links. You know you configured
+CloudFront to use cdn.yourdomain.com. What is the most likely reason why your users not seeing the
+images?
+Choose the correct answer:
+A. There is no rule in your bucket policy allowing public access.
+IT Certification Guaranteed, The Easy Way!
+19
+B. The images in S3 are saved as .png instead of .jpg.
+C. There is no record in Route 53 pointing cdn.yourdomain.com to the ALIAS.
+D. The users are using Internet Explorer.
+Answer: C
+Explanation:
+You must have a Route 53 record. You never want to give public access to your content bucket
+
+
+NO.58 An organization has ordered a new AWS Direct Connect connection. The AWS Management
+Console reports that the connection is available and BGP status is up. However, the networking team
+is not able to reach instances in the VPC using ping on the organization's private IP address What
+could cause this connectivity issue? (Choose two.)
+A. The VGW is not advertising the correct CIDR range back on-premises.
+B. The instance security group does not allow ICMP traffic. 
+C. A public virtual interface must be configured for Amazon EC2 connectivity. 꼭 할 필요 없음
+D. The on-premises router is not advertising the correct CIDR range to AWS.
+E. There is a misconfiguration of the bi-directional forwarding detection. : 해당없음
+Answer: BD
+
+NO.59 An organization is deploying an application in a VPC that requires SSL mutual authentication
+with a client- side certificate, as that is the primary method of identifying clients. The Network
+Engineer has been tasked with defining the mechanism used within AWS to provide the SSL mutual
+authentication.
+Which of the following options meets the organization's requirements?
+A. Use a Classic Load Balancer and upload the client certificate private keys to it. Perform SSL mutual
+authentication of the client-side certificate there.
+B. Use a Network Load Balancer with a TCP listener on port 443, and pass the request through for the
+SSL mutual authentication to be handled by a backend instance.
+C. Use an Application Load Balancer and upload the client certificate private keys to it by using the
+native server name indication (SNI) features with smart certificate selection to handle multiple calling
+applications.
+D. Front the application with Amazon API Gateway, and use its client-side SSL mutual authentication
+feature that uses the backend instances to verify the source of the request.
+Answer: C
+
+
+NO.59 An organization is deploying an application in a VPC that requires SSL mutual authentication
+with a client- side certificate, as that is the primary method of identifying clients. The Network
+Engineer has been tasked with defining the mechanism used within AWS to provide the SSL mutual
+authentication.
+Which of the following options meets the organization's requirements?
+A. Use a Classic Load Balancer and upload the client certificate private keys to it. Perform SSL mutual
+authentication of the client-side certificate there.
+B. Use a Network Load Balancer with a TCP listener on port 443, and pass the request through for the
+SSL mutual authentication to be handled by a backend instance.
+C. Use an Application Load Balancer and upload the client certificate private keys to it by using the
+native server name indication (SNI) features with smart certificate selection to handle multiple calling
+applications.
+D. Front the application with Amazon API Gateway, and use its client-side SSL mutual authentication
+feature that uses the backend instances to verify the source of the request.
+Answer: C
+https://aws.amazon.com/ko/elasticloadbalancing/faqs/
+
+
+NO.60 You received reports from clients in another time zone that they experienced an outage of
+your website several hours before you arrived at work. What two AWS services could prove crucial in
+figuring out what happened?
+Choose the 2 correct answers:
+A. AWS Support
+B. CloudTrail
+C. CloudWatch
+D. Flow Logs
+Answer: CD
+Explanation:CloudTrail is for finding out who made a change. This could be a reason for the outage, but you need
+to see the metrics first. CloudWatch and Flow Logs are the best for this.
+
+NO.61 In order to change the name of the AWS Config ____, you must stop the configuration
+recorder, delete the current one, and create a new one with a new name, since there can only be one
+of these per AWS account.
+A. SNS topic
+B. configuration history
+C. delivery channel
+D. S3 bucket path
+Answer: C
+Explanation:
+
+
+
+NO.62 You are configuring a virtual interface for access to your VPC on a newly provisioned 1-Gbps
+AWS Direct Connect connection. Which two configuration values do you need to provide? (Select
+two.)
+A. Public AS number
+B. VLAN ID
+C. IP prefixes to advertise
+D. Direct Connect location
+E. Virtual private gateway
+Answer: AE
+Explanation https://docs.aws.amazon.com/ko_kr/directconnect/latest/UserGuide/WorkingWithVirtualInterfaces.html#vif-prerequisites
+
+
+NO.63 Which one of the following options is not true about WorkSpaces? Choose the correct
+answer:
+A. WorkSpaces allows integration with Microsoft AD.
+B. WorkSpaces is great for running Linux applications.
+C. WorkSpaces is a fully managed, secure desktop computing service.
+D. WorkSpaces can query on-premises domains for authentication.
+Answer: D
+
+NO.64 Convert the following IPv4 address in presented in binary form, into dotted decimal form
+10101100.01111011.00001101.10011101
+A. 172.123.13.157
+B. 173.13.13.157
+C. 172.122.13.15
+D. 172.124.13.57
+Answer: A
+Explanation:
+
+
+NO.65 You need to find the public IP address of an instance that you're logged in to. What command
+would you use?
+Choose the correct answer:
+A. curl ftp:/ /169.254.169.254/ latest/meta-data/public-ipv4
+B. scp localhost/ latest/meta-data/public-ipv4
+C. curl http:/ /127.0.0.1/ latest/meta-data/public-ipv4
+D. curl http:/ /169.254.169.254/ latest/meta-data/public-ipv4
+Answer: D
+Explanation:
+curl http:/ /169.254.169.254/ latest/meta-data/public-ipv4
+
+
+NO.66 Your organization has placed a project on hold and has stopped 30 public EC2 instances.
+These instances use instance store volumes and do not have custom AMIs associated. You are still
+being charged every month. What is the charge probably for? Choose the correct answer:
+A. AWS charges for dormant accounts.
+B. You have Elastic IPs associated with those instances.
+C. There is a "stopped instance" fee that AWS charges every month.
+D. You are being charged for the EBS volumes.
+Answer: B
+Explanation:
+You have Elastic
