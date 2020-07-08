@@ -1,0 +1,495 @@
+1.Your organizations corporate website must be available on www.acme.com and acme.com.
+How should you configure Amazon Route 53 to meet this requirement?
+A. Configure acme.com with an ALIAS record targeting the ELB. www.acme.com with an ALIAS record targeting the ELB.
+B. Configure acme.com with an A record targeting the ELB. www.acme.com with a CNAME record targeting the acme.com record.
+C. Configure acme.com with a CNAME record targeting the ELB. www.acme.com with a CNAME record targeting the acme.com record.
+D. Configure acme.com using a second ALIAS record with the ELB target. www.acme.com using a PTR
+
+It is A.
+https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/routing-to-elb-load-balancer.html
+
+2. You are building an application in AWS that requires Amazon Elastic MapReduce (Amazon EMR). 
+The application needs to resolve hostnames in your internal, on-premises Active Directory domain. 
+You update your DHCP Options Set in the VPC to point to a pair of Active Directory integrated DNS servers running in your
+VPC.
+Which action is required to support a successful Amazon EMR cluster launch?
+A. Add a conditional forwarder to the Amazon-provided DNS server.
+B. Enable seamless domain join for the Amazon EMR cluster.
+C. Launch an AD connector for the internal domain.
+D. Configure an Amazon Route 53 private zone for the EMR cluster.
+
+A is correct. The following link provides some useful info and it is fairly new (2019) compared to some other links listed on this forum. 
+However, the essence is the same and it reflects the technical evolution over the last couple of years.
+https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/resolver.htm
+   upvoted 1 times
+ Johnny_Green 3 weeks, 3 days ago
+Correction - Just checked again, the architecture probably came out at the end of 2018 rather than 2019.
+
+
+3. You have a three-tier web application with separate subnets for Web, Applications, and Database tiers. Your
+CISO suspects your application will be the target of malicious activity. You are tasked with notifying the security team
+ in the event your application is port scanned by external systems.
+Which two AWS Services cloud you leverage to build an automated notification system? (Select two.)
+A. Internet gateway
+B. VPC Flow Logs
+C. AWS CloudTrail
+D. Lambda
+E. AWS Inspector
+
+B and D are correct. Refer to the following link: https://www.sumologic.com/insight/use-aws-vpc-flow-logs/
+One of the VPC Flow Logs values is the ability to detect and block vulnerability scans against their network
+ by checking for ping sweeps, port scans and other malicious activity associated with attempts to discover
+ weaknesses in the network. Once the sources of such scans are identified, security admins can block them 
+from further access in order to prevent intrusions. In addition, to protect your AWS platform from being port
+ scanned by external systems, you can use AWS Lambda scripts to run periodically.
+
+4. You are designing the network infrastructure for an application server in Amazon VPC. 
+Users will access all the application instances from the Internet and from an on-premises network. 
+The on-premises network is connected to your VPC over an AWS Direct Connect link.
+How should you design routing to meet these requirements?
+A. Configure a single routing table with two default routes: one to the Internet via an IGW, 
+the other to the on- premises network via the VGW. Use this routing table across all subnets in your VPC.
+B. Configure two routing tables: one that has a default route via the IGW, 
+and another that has a default route via the VGW. Associate both routing tables with each VPC subnet.
+C. Configure a single routing table with a default route via the IGW. 
+Propagate a default route via BGP on the AWS Direct Connect customer router. Associate the routing table with each VPC subnet.
+D. Configure a single routing table with a default route via the IGW. 
+Propagate specific routes for the on- premises networks via BGP on the AWS Direct Connect customer router.
+ Associate the routing table with
+
+D is correct. A and B are off because of order of precedence, static route via the IGW has precedence over static from Dx.
+C is out, bcos you're not allowed to advertise default prefix via bgp, AWS will only accept 1,000 prefixes from you.
+D: specific /24 (minimum) will be advertised and you have own the IP space,which aws will validate from regional inet registries.
+
+5. Your company decides to use Amazon S3 to augment its on-premises data store. Instead of using the companys highly controlled,
+ on-premises Internet gateway, a Direct Connect connection is ordered to provide high bandwidth, low latency access to S3.
+ Since the company does not own a publically routable IPv4 address block, a request was made to AWS for an AWS-owned address
+ for a Public Virtual Interface (VIF).
+The security team is calling this new connection a "backdoor", and you have been asked to clarify the risk to the company.
+Which concern from the security team is valid and should be addressed?
+A. AWS advertises its aggregate routes to the Internet allowing anyone on the Internet to reach the router.
+B. Direct Connect customers with a Public VIF in the same region could directly reach the router.
+C. EC2 instances in the same region with access to the Internet could directly reach the router.
+D. The S3 service could reach the router through a pre-configured VPC Endpoint.
+
+C is the right answer! AWS will advertise a Global Prefixes by default for Public Virtual Interface.
+ That said, anyone using AWS Elastic IPs, Managed VPN IPs, and AWS Public Services located in any Region 
+but China are reachable to your P(ublic)IF....
+
+6. Your organization uses a VPN to connect to your VPC but must upgrade to a 1-G AWS Direct Connect connection for stability 
+and performance. Your telecommunications provider has provisioned the circuit from your data center to an AWS Direct Connect 
+facility and needs information on how to cross-connect (e.g., which rack/port to connect).
+What is the AWS-recommended procedure for providing this information?
+
+A. Create a support ticket. Provide your AWS account number and telecommunications companys name and where you need the Direct Connect connection to terminate.
+B. Create a new connection through your AWS Management Console and wait for an email from AWS with information.
+C. Ask your telecommunications provider to contact AWS through an AWS Partner Channel. Provide your AWS account number.
+D. Contact an AWS Account Manager and provide your AWS account number, telecommunications
+
+B "After you request the connection, AWS makes a Letter of Authorization and Connecting Facility Assignment (LOA-CFA) available to 
+you to download, or emails you with a request for more information. If you receive a request for more information,
+ you must respond within 7 days or the connection is deleted. The LOA-CFA is the authorization to connect to AWS,
+ and is required by your network provider to order a cross connect for you.
+ If you do not have equipment in the AWS Direct Connect location, you cannot order a cross connect for yourself there."
+
+
+7. You manage a web service that is used by client applications deployed in 300 offices worldwide.
+ The web service architecture is an Elastic Load balancer (ELB) distributing traffic across four application servers deployed in 
+an autoscaling group across two availability zones.
+The ELB is configured to use round robin, and sticky sessions are disabled. 
+You have configured the NACLs and Security Groups to allow port 22 from your bastion host, and port 80 from 0.0.0.0/0. 
+The client configuration is managed by each regional IT team.
+Upon inspection you find that a large amount of requests from incorrectly configured sites are causing a single application server 
+to degrade. The remainder of the requests are equally distributed across all servers with no negative effects.
+What should you do to remedy the situation and prevent future occurrences?
+
+A. Mark the affected instance as degraded in the ELB and raise it with the client application team.
+B. Update the NACL to only allow port 80 to the application servers from the ELB servers.
+C. Update the Security Groups to only allow port 80 to the application servers from the ELB.
+D. Terminate the affected instance and allow Auto Scaling to create a new instance.
+
+Consider that the question is not say if the Instances are in a public o private subnet.
+A. No
+B. If you close 22 port, you lost access to ec2 instances and probably the problem persist (maybe attack 80 port)
+C. Correct. Because is a good practice, is more secure. Delete risk attack.
+D. Problem could be repeat.
+
+8. A multinational organization has applications deployed in three different AWS regions. 
+These applications must securely communicate with each other by VPN. According to the organizations security team, 
+the VPN must meet the following requirements:
+✑ AES 128-bit encryption
+
+SHA-1 hashing -
+
+✑ User access via SSL VPN
+✑ PFS using DH Group 2
+✑ Ability to maintain/rotate keys and passwords
+✑ Certificate-based authentication
+Which solution should you recommend so that the organization meets the requirements?
+
+A. AWS hardware VPN between the virtual private gateway and customer gateway
+B. A third-party VPN solution deployed from AWS Marketplace
+C. A private MPLS solution from an international carrier
+D. AWS hardware VPN between the virtual private gateways in each region
+
+Correct Answer is B because AWS based Hardware VPN doesn't have the ability to change password/rotate
+ keys and use certificate based auth. One can get these advance VPN features from third-party VPN software
+ available in the AWS Marketplace and install that in a EC2 instance in all the regions.
+
+
+9.You have three VPCs: A, B, and C. VPCs A and C are both peered with VPC B. The IP address ranges are as follows:
+✑ VPC A: 10.0.0.0/16
+✑ VPC B: 192.168.0.0/16
+✑ VPC C: 10.0.0.0/16
+Instance i-1 in VPC A has the IP address 10.0.0.10. Instance i-2 in VPC C has the IP address 10.0.0.10.
+Instances i-3 and i-4 in VPC B have the IP addresses 192.168.1.10 and 192.168.1.20, respectively, i-3 and i-4 are in the subnet 192.168.1.0/24.
+✑ i-3 must be able to communicate with i-1
+✑ i-4 must be able to communicate with i-2
+✑ i-3 and i-4 are able to communicate with i-1, but not with i-2.
+Which two steps will fix this problem? (Select two.)
+A. Create subnets 192.168.1.0/28 and 192.168.1.16/28. Move i-3 and i-4 to these subnets, respectively.
+B. Create subnets 192.168.1.0/27 and 192.168.1.16/27. Move i-3 and i-4 to these subnets, respectively.
+C. Change the IP address of i-2 to 10.0.0.100. Assign it an elastic IP address.
+D. Create a new route table for VPC B, with unique route entries for destination VPC A and destination VPC C.
+E. Create two route tables: one with a route for destination VPC A, and another for destination VPC C.
+
+Reconsider my answers above as follows. First let's remember the following -
+ "A route table can be associated with multiple subnets. However, a subnet can only be associated with one route table at a time."
+
+Answer E cannot be the correct answer because it creates two route tables for VPC B 
+which is not allowed. Since Answer A has already created two smaller non-overlapping subnets 
+(192.168.1.0/28 and 192.168.1.16/28) for VPC A and VPC C respectively,
+ Answer D appears to be the correct answer. 
+Please refer to the following link for more details:
+ https://docs.aws.amazon.com/vpc/latest/peering/peering-configurations-partial-access.html
+
+
+
+10.A legacy, on-premises web application cannot be load balances effectively. There are both planned and unplanned events that cause usage spikes to millions of concurrent users. The existing infrastructure cannot handle the usage spikes. The CIO has mandated that the application be moved to the cloud to avoid further disruptions, with the additional requirement that source IP addresses be unaltered to support network traffic- monitoring needs. Which of the following designs will meet these requirements?
+A. Use an Auto Scaling group of Amazon EC2 instances behind a Classic Load Balancer.
+B. Use an Auto Scaling group of EC2 instances in a target group behind an Application Load Balancer.
+C. Use an Auto Scaling group of EC2 instances in a target group behind a Classic Load Balancer.
+D. Use an Auto Scaling group of EC2 instances in a target group behind a Network Load Balancer.
+
+1. consider use: AWS Bring Your Own IP (BYOIP), to conserve source IP.
+2. Create Elastic Network Interface with source IP
+3. Use Elastic IP with network load balancer
+D , because "usage spikes to millions" i.e. extreme traffic.
+Answe: D
+
+
+11. An organization processes consumer information submitted through its website. The organizations security policy requires that personally identifiable information (PII) elements are specifically encrypted at all times and as soon as feasible when received. The front-end Amazon EC2 instances should not have access to decrypted PII. A single service within the production VPC must decrypt the PII by leveraging an iAM role.
+Which combination of services will support these requirement? (Select two.)
+A. Amazon Aurora in a private subnet
+B. Amazon CloudFront using AWS Lambda@Edge
+C. Customer-managed MySQL with Transparent Data Encryption
+D. Application Load Balancer using HTTPS listeners and targets
+E. AWS Key Management Services
+
+Answer: B, E
+Have the website write PII to S3 via CLoudFront/Lambda@Edge into an S3 bucket, encrypted using KMS keys.
+Have the website call for the PII via CloudFront/Lambda@Edge, using KMS to decrypt the S3 objects.
+A - incorrect - huh?
+B - correct
+C - incorrect - If the EC2 instance uses a role to encrypt the PII, it must also use that same role to decrypt the PII - thus storing it in whatever system effectively gives it access read the data
+D - incorrect - (sort of) - HTTPS is also possible via CloudFront, which makes this answer redundant
+E - correct - KMS to encrypt/decrypt
+
+https://aws.amazon.com/blogs/networking-and-content-delivery/serving-sse-kms-encrypted-content-from-s3-using-cloudfront/
+
+
+12.A Lambda function needs to access the private address of an Amazon ElastiCache cluster in a VPC. The
+Lambda function also needs to write messages to Amazon SQS. The Lambda function has been configured to run in a subnet in the VPC.
+Which of the following actions meet the requirements? (Select two.)
+A. The Lambda function needs an IAM role to access Amazon SQS
+B. The Lambda function must route through a NAT gateway or NAT instance in another subnet to access the public SQS API.
+C. The Lambda function must be assigned a public IP address to access the public Amazon SQS API.
+D. The ElastiCache server outbound security group rules must be configured to permit the Lambda functions security group.
+E. The Lambda function must consume auto-assigned public IP addresses but not elastic IP addresses.
+
+Lambda access private IP of EC cluster.
+Lambda write messages to SQS.
+Lambda in a VPC subnet.
+C. Nope.
+D. Nope.
+E. Nope.
+A. Yes. IAM permissions required to access services.
+B. Yes. NAT function is the method use.
+Summary. Assigning Public IPs to Lambda can be done, once the ENI for Lambda is created you can assign a public IP. It's not recommended as a race condition can occur where multiple ENIs are then created for a single IP. NAT GW or NAT instance or VPC are recommended official solutions. Access private address of cluster is a misdirect.
+Answer is AB.
+
+13. You are deploying an EC2 instance in a private subnet that requires access to the Internet. 
+One of the requirements for this solution is to restrict access to only particular URLs on a whitelist. 
+In addition to the whitelisted URL, the instances should be able to access any Amazon S3 bucket in the same region via any
+URL.
+Which of the following solutions should you deploy? (Select two.)
+
+A. Include s3.amazonaws.com in the whitelist.
+B. Create a VPC endpoint for S3.
+C. Run Squid proxy on a NAT instance.
+D. Deploy a NAT gateway into your VPC.
+E. Utilize a security group to restrict access.
+
+Answer: B,C
+
+A - incorrect - missing region: s3.<region>.amazonaws.com
+B - correct - EC2->VPC Endpoint->S3 bucket (S3 endpoints can access buckets in specified region only. 
+https://docs.aws.amazon.com/vpc/latest/userguide/vpc-endpoints-s3.html)
+C - correct - EC2->NAT Instance->Squid Proxy+Whitelists/Blacklists->Internet->Allowed sites/URLs
+D - incorrect - doesn't enable whitelisting, but allows all internet access
+E - incorrect - doesn't enable whitelisting on URLs, also can't deny anything (use NACLs) -
+ both require code to constantly update allow, allow/deny rules
+
+14. Your company runs an HTTPS application using an Elastic Load Balancing (ELB) load balancer/PHP 
+on nginx server/RDS in multiple Availability Zones. You need to apply Geographic Restriction and identify 
+the clients IP address in your application to generate dynamic content.
+How should you utilize AWS services in a scalable fashion to perform this task?
+
+A. Modify the nginx log configuration to record value in X-Forwarded-For
+ and use CloudFront to apply the Geographic Restriction.
+B. Enable ELB access logs to store the client IP address and parse these to dynamically modify a blacklist.
+C. Use X-Forwarded-For with security groups to apply the Geographic Restriction.
+D. Modify the application code to use value of X-Forwarded-For and CloudFront to apply the Geographic
+
+D - easy to look this one up.
+
+ttps://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/georestrictions.html
+
+15. You run a well-architected, multi-AZ application in the eu-central-1 (Frankfurt) AWS region.
+ The application is hosted in a VPC and is only accesses from the corporate network. 
+To support large volumes of data transfer and administration of the application,
+ you use a single 10-Gbps AWS Direct Connect connection with multiple private virtual interfaces. 
+As part of a review, you decide to improve the resilience of your connection to AWS and make sure that
+ any additional connectivity does not share the same Direct Connect routers at AWS.
+ You need to provide the best levels of resilience to meet the applications needs.
+Which two options should you consider? (Select two.)
+
+A. Install a second 10-Gbps Direct Connect connection to the same Direct Connection location.
+B. Deploy an IPsec VPN over a public virtual interface on a new 10-Gbps Direct Connect connection.
+C. Install a second 10-Gbps Direct Connect connection to a Direct Connect location in eu-west-1.
+D. Deploy an IPsec VPN over the Internet to the eu-west-1 region for diversity.
+E. Install a second 10-Gbps Direct Connect connection to a second Direct Connect location for eu-central-1.
+
+A E, surely.
+https://aws.amazon.com/pt/directconnect/resiliency-recommendation/
+
+16. You currently use a single security group assigned to all nodes in a clustered NoSQL database. 
+Only your cluster members in one region must be able to connect to each other. 
+This security group uses a self- referencing rule using the cluster security groups group-id to make it easier
+ to add or remove nodes from the cluster. 
+You need to make this database comply with out-of-region disaster recovery requirements and 
+ensure that the network traffic between the nodes is encrypted when travelling between regions. 
+How should you enable secure cluster communication while deploying additional cluster members in another AWS region?
+
+A. Create an IPsec VPN between AWS regions, use private IP addresses to route traffic, 
+and create cluster security group rules that reference each others security group-id in each region.
+B. Create an IPsec VPN between AWS regions, use private IP addresses to route traffic, 
+and create cluster security group CIDR-based rules that correspond with the VPC CIDR in the other region.
+C. Use public IP addresses and TLS to securely communicate between cluster nodes in each AWS region,
+ and create cluster security group CIDR-based rules that correspond with the VPC CIDR in the other region.
+D. Use public IP addresses and TLS to securely communicate between cluster nodes in each AWS region,
+
+ Answer is B. Security Groups are regional (cannot span multiple regions).
+
+17. You have to set up an AWS Direct Connect connection to connect your on-premises to an AWS VPC. 
+Due to budget requirements, you can only provision a single Direct Connect port. 
+You have two border gateway routers at your on-premises data center that can peer with the Direct Connect routers for redundancy.
+Which two design methodologies, in combination, will achieve this connectivity? (Select two.)
+
+A. Terminate the Direct Connect circuit on a L2 border switch, which in turn has trunk connections to the two routers.
+B. Create two Direct Connect private VIFs for the same VPC, each with a different peer IP.
+C. Terminate the Direct Connect circuit on any of the one routers, which in turn will have an IBGP session with the other router.
+D. Create one Direct Connect private VIF for the VPC with two customer peer IPs.
+E. Provision two VGWs for the VPC and create one Direct Connect private VIF per VGW.
+
+A- Correct
+B- Correct
+C- Doesn't make any value with redundancy
+D- You cannot create 1 VIF with 2 different customer peer IP
+E- You can only have one VGW per 
+
+18. Your organization needs to resolve DNS entries stored in an Amazon Route 53 private zone
+"awscloud:internal" from the corporate network. An AWS Direct Connect connection with a private virtual interface
+ is configured to provide access to a VPC with the CIDR block 192.168.0.0/16. A DNS Resolver
+(BIND) is configured on an Amazon Elastic Compute Cloud (EC2) instance with the IP address 192.168.10.5 
+within the VPC. The DNS Resolver has standard root server hints configured and conditional forwarding for
+"awscloud.internal" to the IP address 192.168.0.2.
+
+From your PC on the corporate network, you query the DNS server at 192.168.10.5 for www.amazon.com. 
+The query is successful and returns the appropriate response. When you query for "server.awscloud.internal", t
+he query times out. You receive no response.
+How should you enable successful queries for "server.awscloud.internal"?
+
+A. Attach an internet gateway to the VPC and create a default route.
+B. Configure the VPC settings for enableDnsHostnames and enableDnsSupport as True
+C. Relocate the BIND DNS Resolver to the corporate network.
+D. Update the security group for the EC2 instance at 192.168.10.5 to allow UDP Port 53 outbound.
+
+Inside AWS VPC, 192.168.0.2 is reserved to DNS
+"B" is correct.
+
+19. Your company’s policy requires that all VPCs peer with a "common services: VPC. 
+This VPC contains a fleet of layer 7 proxies and an Internet gateway. No other VPC is allowed to provision an Internet gateway. 
+You configure a new VPC and peer with the common service VPC as required by policy. You launch an Amazon
+EC2. Windows instance configured to forward all traffic to the layer 7 proxies in the common services VPC.
+The application on this server should successfully interact with Amazon S3 using its properly configured AWS
+Identity and Access Management (IAM) role. However, Amazon S3 is returning 403 errors to the application.
+Which step should you take to enable access to Amazon S3?
+
+A. Update the S3 bucket policy with the private IP address of the instance.
+B. Exclude 169.254.169.0/24 from the instance’s proxy configuration.
+C. Configure a VPC endpoint for Amazon S3 in the same subnet as the instance.
+D. Update the CORS configuration for Amazon S3 to allow traffic from the proxy.
+
+Answer is B
+"If you configure a proxy on an Amazon EC2 instance launched with an attached IAM role,
+ ensure that you exempt the address used to access the instance metadata.
+ To do this, set the NO_PROXY environment variable to the IP address of the instance metadata service, 
+169.254.169.254. This address does not vary."
+
+20. A customer is using ABC Telecom as a network provider. The customer has 10 different offices connected to
+ABC Telecoms MPLS backbone. The customer is setting up an AWS Direct Connect connection to AWS and has provided the 
+LOA-CFA to ABC Telecom. ABC Telecom has terminated the Direct Connect circuit into their
+MPLS backbone. To uniquely identify the customers traffic over the MPLS backbone, the customer must encapsulate all traffic 
+with VLAN tag 100. The customer wants to send traffic to multiple VPCs.
+Which two steps should be taken to meet the customers requirement? (Select two.)
+
+A. The customer performs Q-in-Q tunneling, with the AWS-required VLAN tag in the inside and VLAN 100 as the outside tag.
+B. Create a support ticket with AWS to request the removal of the outer VLAN tag 100 as the traffic reaches AWS routers.
+C. Send the traffic for all VPCs with the same VLAN tag 100 and use BGP to ensure that proper routing takes place to the appropriate VPC.
+D. ABC Telecom removes the other tag before sending the packet to AWS.
+E. ABC Telecom creates a support ticket with AWS to exchange MPLS labels and include the AWS port as
+
+A and D
+Each hosted connection is assigned a VLAN on creation by the partner. 
+Each VIF on a given connection requires a unique VLAN tag that can be provisioned only by the partner.
+
+21. An organization runs a consumer-facing website on AWS. The Amazon EC2-based web fleet is load balanced 
+using the AWS Application Load Balancer, Amazon Route 53 is used to provide the public DNS services.
+The following URLs need to server content to end users:
+test.example.com
+web.example.com
+example.com
+Based on this information, what combination of services must be used to meet the requirement? (Select two.)
+
+A. Path condition in ALB listener to route example.com to appropriate target groups.
+B. Host condition in ALB listener to route *.example.com to appropriate target groups.
+C. Host condition a ALB listener to route example.com to appropriate target groups.
+D. Path condition in ALB listener to route *.example.com to appropriate target groups.
+E. Host condition in ALB listener to route $$$$.example.com to appropriate target groups.
+
+Host conditions must be used, so B and C,
+A is incorrect PATH condition
+E is incorrect because not valid format
+https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-listeners.html
+
+22. Under increased cybersecurity concerns, a company is deploying a near real-time intrusion detection system
+(IDS) solution. A system must be put in place as soon as possible. The architecture consists of many AWS accounts,
+ and all results must be delivered to a central location.
+Which solution will meet this requirement, while minimizing downtime and costs?
+
+A. Deploy a third-party vendor solution to perform deep packet inspection in a transit VPC.
+B. Enable VPV Flow Logs on each VPC. Set up a stream of the flow logs to a central Amazon Elasticsearch cluster.
+C. Enable Amazon Macie on each AWS account and configure central reporting.
+D. Enable Amazon GuardDuty on each account as members of a central account.
+
+Correction. It is D. Guard Duty. "Near Real Time Detection" "Must be put in place as soon as possible". 
+These statements points to GUARD DUTY. Answer A talks about Deep Packet Inspection which although helpful
+ and close is NOT requirement of question.
+
+23. An organization delivers high-resolution, dynamic web content. Internet users access the content from a variety of platforms,
+ including mobile, tablet and desktop. Each platform receives a customized experience to account for the differences in viewing modes.
+ A dedicated, automatic-scaling fleet of Amazon EC2 instances is used for each platform to server content based on path-based headers.
+Which combination of services will MINIMIZE cost and MAXIMIZE performance? (Select two.)
+
+A. Amazon CloudFront with Lambda@Edge
+B. Network Load Balancer
+C. Amazon S3 static websites
+D. Amazon Route 53 with traffic flow policies
+E. Application Load Balancer
+
+A: The question states that "internet users" will use the service, therefore CloudFront required.
+B: No appropriated for path-based headers
+C: Dynamic content needed, not static.
+D: R53 ok, but not path-preferred proposed
+E: This is OK. Is the only one clear for me.
+Conclusion: A and E
+
+24. You need to set up a VPN between AWS VPC and your on-premises network. You create a VPN connection 
+in the AWS Management Console, download the configuration file, and install it on your on-premises router. 
+The tunnel is not coming up because of firewall restrictions on your router.
+ Which two network traffic options should you allow through the firewall? (Select two.)
+
+A. UDP port 500
+B. IP protocol 50
+C. IP protocol 5
+D. TCP port 50
+E. TCP port 500
+
+ the ans should be AB
+https://docs.aws.amazon.com/vpc/latest/adminguide/Introduction.html#FirewallRules
+
+25. You have been asked to monitor traffic flows on your Amazon EC2 instance.
+ You will be performing deep packet inspection, looking for atypical patterns.
+Which tool will enable you to look at this data?
+
+A. Wireshark
+B. VPC Flow Logs
+C. AWS CLI
+D. CloudWatch Logs
+
+Answer is A . DEEP PACKET INSPECTION on your EC2
+
+
+26. You ping an Amazon Elastic Compute Cloud (EC2) instance from an on-premises server. VPC Flow Logs record the following:
+2 123456789010 eni-1235b8ca 10.123.234.78 172.11.22.33 0 0 1 8 672 1432917027
+1432917142 ACCEPT OK
+2 123456789010 eni-1235b8ca 172.11.22.33 10.123.234.78 0 0 1 4 336 1432917027
+1432917082 ACCEPT OK
+2 123456789010 eni-1235b8ca 172.11.22.33 10.123.234.78 0 0 1 4 336 1432917094
+1432917142 REJECT OK
+Why are ICMP responses not received by the on-premises system?
+
+A. The inbound network access control list is blocking the traffic
+B. The outbound network access control list is blocking the traffic
+C. The inbound security group is blocking the traffic.
+D. The outbound security group is blocking the traffic.
+
+Answer is B, we have TWO accepts, so B is correct.
+Ref: https://docs.aws.amazon.com/vpc/latest/userguide/flow-logs-records-examples.html
+
+If your network ACL permits outbound ICMP traffic, the flow log displays two ACCEPT records
+ (one for the originating ping and one for the response ping). 
+If your security group denies inbound ICMP traffic, the flow log displays a single REJECT record, 
+because the traffic was not permitted to reach your instance.
+
+27. You are moving a two-tier application into an Amazon VPC. 
+An Elastic Load Balancing (ELB) load balancer is configured in from of the application tier. 
+The application tier is driven through RESTful interfaces. The data tier uses relational database service (RDS) MySQL. 
+Company policy requires end-to-end encryption of all data in transit.
+What ELB configuration complies with the corporate encryption policy?
+
+A. Configure the ELB load balancer protocol as HTTP. Configure the application instances for SSL termination.
+ Configure Amazon RDS for SSL, and use REQUIRE SSL grants.
+B. Configure the ELB protocols in TCP mode. Configure the application instances for SSL termination.
+ Configure Amazon RDS for SSL, and use REQUIRE SSL grants.
+C. Configure the ELB load balancer protocol as HTTPS. Offload application instance encryption to the load balancer. 
+Install your SSL certificate on Amazon RDS, and configure SSL.
+D. Configure the ELB protocols in SSL mode. Offload application instance encryption to the load balancer.
+
+Answer is B, ELB cannot re-encrypt https traffic. So working at tcp level and leaving decrypting to App servers solve the problem.
+
+28. Your application is hosted behind an Elastic Load Balancer (ELB) within an autoscaling group. 
+The autoscaling group is configured with a minimum of 2, a maximum of 14, and a desired value of 2. 
+The autoscaling cooldown and the termination policies are set to the default value.
+CloudWatch reports that the site typically requires just two servers, but spikes at the start and end of the business day 
+can require eight to ten servers. You receive intermittent reports of timeouts and partially loaded web pages.
+Which configuration change should you make to address this issue?
+
+A. Configure connection draining on the ELB.
+B. Configure the autoscaling cooldown to 600 seconds.
+C. Configure the termination policy to oldest instance.
+D. Configure a Terminating: Wait lifecycle hook on a scale in event.
+
+"timeout of partially loaded pages" => the instance that users are connecting to is terminated due to scale in.
+=> Enable connection draining, A is correct.
