@@ -493,3 +493,360 @@ D. Configure a Terminating: Wait lifecycle hook on a scale in event.
 
 "timeout of partially loaded pages" => the instance that users are connecting to is terminated due to scale in.
 => Enable connection draining, A is correct.
+
+29. You are designing an AWS Direct Connect solution into your VPC. You need to consider requirements for the customer router
+ to terminate the Direct Connect link at the Direct Connect location.
+Which three factors that must be supported should you consider when choosing the customer router? (Select three.)
+
+A. 802.1q trunking
+B. 802.1ax or 802.3ad link aggregation
+C. OSPF
+D. BGP
+E. single-mode optical fiber connectivity
+F. 1-Gbps copper connectivity
+
+ADE (VLAN, BGP, fiber optic)
+
+30. Your company uses an NTP server to synchronize time across systems. The company runs multiple versions of Linux and 
+Windows systems. You discover that the NTP server has failed, and you need to add an alternate
+NTP server to your instances.
+Where should you apply the NTP server update to propagate information without rebooting your running instances?
+
+A. DHCP Options Set
+B. instance user-data
+C. cfn-init scripts
+D. instance meta-data
+
+The answer is A
+ANS:A
+After you associate a new set of DHCP options with a VPC, any existing instances and all new instances 
+that you launch in the VPC use these options. You don't need to restart or relaunch the instances. 
+They automatically pick up the changes within a few hours, depending on how frequently the instance renews its DHCP lease. 
+If you want, you can explicitly renew the lease using the operating system on the instance.
+
+31. Your company has set up AWS Direct Connect to connect on-premises to an Amazon VPC instance. Two
+Direct Connect connections terminate at two different Direct Connect locations. You are using two routers, R1 and R2,
+ at your end (one of each Direct Connect connection). R1 and R2 do NOT have connectivity between them. 
+Both routers advertise the same routers over BGP to the VGW. 
+You have a stateful firewall on each router. The routers drop some of the traffic coming from the VPC.
+Which two actions should you take to fix this problem? (Select two.)
+
+A. Use BGP AS prepend attribute to prepend additional AS numbers while advertising routers from R1 to VGW.
+B. Use BGP local preference attribute to assign R1 to a lower local preference number than R2.
+C. Use BGP local preference attribute to assign R1 a higher local preference number than R2.
+D. Use BGP MED attribute to assign a higher MED value to the routes advertised R1 to VGW.
+E. Use BGP MED attribute to assign a higher MED value to the routes advertised from R2 to VGW.
+
+
+BGP 101. In order of evaluation.
+1. Local Prerf = higher value more preferred.
+2. AS-Path.
+3. MED. Lower value preferred.
+
+Finding a solution for R1 is not possible, so focus on R2 as primary router.
+A. Yes. Make path to R1 longer.
+B. Yes. Lower Pref on R1 makes R2 more preferred.
+C. Nope.
+D. Decision MED is too far out.
+E. Decision MED is too far out.
+Summary. AWS VGW will see path to R1 is longer = less preferred - so use R2.
+Local Pref to lower value = less preferred route.
+
+https://docs.aws.amazon.com/vpn/latest/s2svpn/VPNRoutingTypes.html
+
+32. An organization will be expanding its current network design. When fully built out, there will be 99 VPCs spread across 
+11 AWS accounts (9 VPCs per account). There is currently an AWS Direct Connect connection into one account with 9 VPCs, 
+each with a virtual network interface (VIF) per VPC.
+Which of the following designs will minimize cost while allowing the organization to expand?
+
+A. Order 10 new Direct Connect connections, one from each of the accounts that will be provisioned.
+ Create private VIFs in each account. Attach one private VIF per VPC.
+B. Create a public VIF on the Direct Connect connection. Leverage the public VIF to create a VPN connection to each VPC.
+C. Create hosted private VIFs in the existing account. Connect a private VIF to an AWS Direct Connect gateway in each account
+. Connect the gateway in each account to the VPCs.
+D. Create a transit VPC in the existing account that consists of two routers in separate Availability Zones.
+
+D is the answer. I found this article which discusses a similar scenario: 
+https://medium.com/driven-by-code/aws-transit-gateway-routing-in-multiple-accounts-713b10ca7b34
+Reconsider my answer above. Further investigation indicates C should be the answer.
+ The only sticking point is that within each account, a Direct Connect Gateway does not allow gateway associations
+ that are on the same Direct Connect gateway to send traffic to each other (e.g. a virtual private gateway to another 
+virtual private gateway). This can be a problem but since the question itself didn't mention any such requirement, 
+I would still pick C as the answer.
+
+33. An organization with a growing e-commerce presence uses the AWS CloudHSM to offload the SSL/TLS processing 
+of its web server fleet. The company leverages Amazon EC2 Auto Scaling for web servers to handle the growth.
+ What architectural approach is optimal to scale the encryption operation?
+
+A. Use multiple CloudHSM instances, and load balance them using a Network Load Balancer.
+B. Use multiple CloudHSM instances to the cluster;request to it will automatically load balance.
+C. Enable Auto Scaling on the CloudHSM instance, with similar configuration to the web tier Auto Scaling group.
+D. Use multiple CloudHSM instances, and load balance them using an Application Load Balancer.
+
+answer is B. automatically load balance when an instance is request 
+https://docs.aws.amazon.com/cloudhsm/latest/userguide/clusters.html#cluster-high-availability-load-balancing
+
+34. A company has 225 mobile and desktop devices and 300 partner VPNs that need access to an AWS VPC.
+VPN users should not be able to reach one another. Which approach will meet the technical and security requirements 
+while minimizing costs?
+
+A. Use the AWS IPsec VPN for the mobile, desktop, and partner VPN connections.
+ Use network access control lists (Network ACLs) and security groups to maintain routing separation.
+B. Use the AWS IPsec VPN for the partner VPN connections. Use an Amazon EC2 instance VPN for the mobile and desktop devices. 
+Use Network ACLs and security groups to maintain routing separation.
+C. Create an AWS Direct Connect connection between on-premises and AWS Use a public virtual interface to connect to
+ the AWS IPsec VPN for the mobile, desktop, and partner VPN connections.
+D. Use an Amazon EC2 instance VPN for the desktop, mobile, and partner VPN connections. Use features of
+
+B seems to make some sense but there are two issues: 
+1) "Use Network ACLs and security groups to maintain routing separation" does not apply to the edges;
+ 2) VPN connections per VPC = 50. Therefore, we are left with D.
+
+35. Your company needs to leverage Amazon Simple Storage Solution (S3) for backup and archiving. 
+According to company policy, data should not flow on the public Internet even if data is encrypted. You have set up two
+S3 buckets in us-east-1 and us-west-2. Your company data center is located on the West Coast of the United
+States. The design must be cost-effective and enable minimal latency.
+Which design should you set up?
+
+A. An AWS Direct Connect connection to us-east-1 and a Direct Connect connection to us-west-2.
+B. An AWS Direct Connect connection to us-east-1.
+C. An AWS Direct Connect connection to us-west-2.
+D. An AWS Direct Connect connection to us-west-2 and a VPN connection to us-east-1.
+
+Agreed with ohcan it should be C because with a DX public VIF users will be able to access 
+all S3 buckets no need to purchase a second DX connection
+
+36. Your organization runs a popular e-commerce application deployed on AWS that uses autoscaling in 
+conjunction with an Elastic Load balancing (ELB) service with an HTTPS.
+ Your security team reports that an exploitable vulnerability has been discovered in the encryption protocol 
+and cipher that your site uses.
+Which step should you take to fix this problem?
+
+A. Generate new SSL certificates for all web servers and replace current certificates.
+B. Change the security policy on the ELB to disable vulnerable protocols and ciphers.
+C. Generate new SSL certificates and use ELB to front-end the encrypted traffic for all web servers.
+D. Leverage your current configuration management system to update SSL policy on all web servers.
+
+If the SSL offload happens at ELB, correct answer is B - vulnerable ciphers and protocols can be removed on the security policy
+
+37. Your organization leverages an IP Address Management (IPAM) product to manage IP address distribution.
+The IPAM exposes an API. Development teams use CloudFormation to provision approved reference architectures. 
+At deployment time, IP addresses must be allocated to the VPC. When the VPC is deleted, the
+IPAM must reclaim the VPCs IP allocation.
+Which method allows for efficient, automated integration of the IPAM with CloudFormation?
+
+A. AWS CloudFormation parameters using the "Ref::" intrinsic function
+B. AWS CloudFormation custom resource using an AWS Lambda invocation.
+C. CloudFormation::OpsWorks::Stack with custom Chef configuration.
+D. AWS CloudFormation parameters using the "Fn::FindInMap" intrinsic function.
+
+I am leaning towards B. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-cfn-customresource.html
+
+38. You need to set up an Amazon Elastic Compute Cloud (EC2) instance for an application that requires the lowest latency 
+and the highest packet-per-second network performance. The application will talk to other servers in a peered VPC.
+Which two of the following components should be part of the design? (Select two.)
+
+A. Select an instance with support for single root I/O virtualization.
+B. Select an instance that has support for multiple ENAs.
+C. Ensure that the instance supports jumbo frames and set 9001 MTU.
+D. Select an instance with Amazon Elastic Block Store (EBS)-optimization.
+E. Ensure that proper OS drivers are installed.
+
+Answers: A&E.
+https://aws.amazon.com/ec2/faqs/
+(A) SR-IOV is a method of device virtualization that provides higher I/O performance and lower CPU utilization compared to
+ traditional implementations. For supported Amazon EC2 instances, this feature provides higher packet per second (PPS) performance, 
+lower inter-instance latencies, and very low network jitter.
+(E) In order to enable this feature, you must launch an HVM AMI with the appropriate drivers.
+
+39. You are configuring a virtual interface for access to your VPC on a newly provisioned 1-Gbps AWS Direct
+Connect connection. Which two configuration values do you need to provide? (Select two.)
+A. Public AS number
+B. VLAN ID
+C. IP prefixes to advertise
+D. Direct Connect location
+E. Virtual private gateway
+
+B & E are Correct..
+Sorry... I was thinking from a BGP Configuration perspective.
+Refer:
+https://docs.aws.amazon.com/directconnect/latest/UserGuide/getting_started.html
+
+40. A corporate network routing table contains 624 individual RFC 1918 and public IP prefixes. You have two AWS
+Direct Connect connectors. You configure a private virtual interface on both connections to a virtual private gateway. 
+The virtual private gateway is not currently attached to a VPC. Neither BGP session wall maintain state on the customer router.
+ The AWS Management Console reports the private virtual
+What could you do to address the problem so that the AWS Management Console reports the private virtual
+?
+
+A. Attach the virtual private gateway to a VPC and enable route propagation.
+B. Filter the public IP pre?xes on the corporate network from the private virtual interface.
+C. Change the BGP advertisements from the corporate network to only be a default route.
+D. Attach the second virtual interface to an alternative virtual private gateway.
+
+Answer is C,Even though you connect the VGW and enable route propagation the routes are over 100.
+so the BGP session would be down
+
+41. Your company maintains an Amazon Route 53 private hosted zone. DNS resolution is restricted to a single, pre-existing VPC.
+ For a new application deployment, you create an additional VPC in the same AWS account.
+Both this new VPC and your on-premises DNS infrastructure must resolve records in the existing private hosted zone.
+Which two activities are required to enable DNS resolution both within the new VPC and from the on-premises infrastructure? (Select two.)
+
+A. Update the DHCP options set for the new VPC with the Route 53 nameserver IP addresses.
+B. Update the Route 53 private hosted zone’s VPC associations to include the new VPC.
+C. Launch Amazon EC2-based DNS proxies in the new VPC. Specify the proxies as forwarders in the on- premises DNS.
+D. Update the on-premises DNS to include forwarders to the Route 53 nameserver IP addresses.
+E. Launch Amazon EC2-based DNS proxies in the new VPC. Specify the proxies in the DHCP options set.
+
+B and C
+B = associate the Hzone with the new vpc.
+C and not D because you cant communicate with the vpc aws dns ip from the on prem. only via a proxy.
+
+42. A department in your company has created a new account that is not part of the organizations consolidated billing family.
+ The department has also created a VPC for its workload. Access is restricted by network access control lists to the departments
+ on-premises private IP allocation. An AWS Direct Connect private virtual interface for this VPC advertises a default route
+ to the company network. When the department downloads data from an Amazon Elastic Compute Cloud(EC2) instance in its new VPC, 
+what are the associated charges?
+
+A. The company pays Internet Data Out charges.
+B. The company pays AWS Direct Connect Data Out charges.
+C. The department pays Internet Data Out charges.
+D. The department pays AWS Direct Connect Data Out charges.
+
+- not in consolidated billing
+- route to own VPC to a private IP address via own Private IF
+"After creating a VIF, AWS Direct Connect data transfer charges then apply and are charged to the account that owns the VIF. 
+The account that owns the VIF can be different from the account that owns the AWS Direct Connect connection." 
+- Straight from the Study Guide.
+
+Answer is D.
+
+43. An organization will be extending its existing on-premises infrastructure into the cloud. The design consists of a transit VPC
+ that contains stateful firewalls that will be deployed in a highly available configuration across two
+Availability Zones for automatic failover.
+What MUST be configured for this design to work? (Select two.)
+
+A. A different Autonomous System Number (ASN) for each firewall.
+B. Border Gateway Protocol (BGP) routing
+C. Autonomous system (AS) path prepending
+D. Static routing
+E. Equal-cost multi-path routing (ECMP)
+
+Agree with BC. https://docs.aws.amazon.com/solutions/latest/cisco-based-transit-vpc/appendix-a.html
+
+44. A company is about to migrate an application from its on-premises data center to AWS. As part of the planning process,
+ the following requirements involving DNS have been identified.
+✑ On-premises systems must be able to resolve the entries in an Amazon Route 53 private hosted zone.
+✑ Amazon EC2 instances running in the organizations VPC must be able to resolve the DNS names of on- premises systems
+The organizations VPC uses the CIDR block 172.16.0.0/16.
+Assuming that there is no DNS namespace overlap, how can these requirements be met?
+
+A. Change the DHCP options set for the VPC to use both the Amazon-provided DNS server and the on- premises DNS systems.
+ Configure the on-premises DNS systems with a stub-zone, delegating the name server 172.16.0.2 as authoritative for the Route 53 private hosted zone.
+B. Deploy and configure a set of EC2 instances into the company VPC to act as DNS proxies. Configure the proxies to forward queries for
+ the on-premises domain to the on-premises DNS systems, and forward all other queries to 172.16.0.2. 
+Change the DHCP options set for the VPC to use the new DNS proxies.
+ Configure the on-premises DNS systems with a stub-zone, delegating the name server 172.16.0.2 as authoritative for the Route 53 private hosted zone.
+C. Deploy and configure a set of EC2 instances into the company VPC to act as DNS proxies. 
+Configure the proxies to forward queries for the on-premises domain to the on-premises DNS systems,
+ and forward all other queries to the Amazon-provided DNS server (172.16.0.2). 
+Change the DHCP options set for the VPC to use the new DNS proxies.
+ Configure the on-premises DNS systems with a stub-zone, delegating the proxies as authoritative for the Route 53 private hosted zone.
+D. Change the DHCP options set for the VPC to use both the on-premises DNS systems. 
+Configure the on- premises DNS systems with a stub-zone, delegating the Route 53 private hosted zones name servers as
+
+C: https://aws.amazon.com/blogs/security/how-to-set-up-dns-resolution-between-on-premises-networks-and-aws-by-using-unbound/
+
+45. The Web Application Development team is worried about malicious activity from 200 random IP addresses.
+Which action will ensure security and scalability from this type of threat?
+
+A. Use inbound security group rules to block the IP addresses.
+B. Use inbound network ACL rules to block the IP addresses.
+C. Use AWS WAF to block the IP addresses.
+D. Write iptables rules on the instance to block the IP addresse
+
+Ans is C
+"Random" IPs so you cannot scalably put rules in NACLs, 
+also not best practice for AWS to have that large amount of NACLs.
+"AWS WAF, which functions like a typical web application firewall, 
+but with the added reliability and scalability that comes with being an AWS-managed service."
+
+46. You operate a production VPC with both a public and a private subnet. 
+Your organization maintains a restricted Amazon S3 bucket to support this production workload. 
+Only Amazon EC2 instances in the private subnet should access the bucket. 
+You implement VPC endpoints(VPC-E) for Amazon S3 and remove the NAT that previously provided a network path to Amazon S3.
+ The default VPC-E policy is applied. Neither EC2 instances in the public or private subnets are able to access the S3 bucket.
+What should you do to enable Amazon S3 access from EC2 instances in the private subnet?
+
+A. Add the CIDR address range of the private subnet to the S3 bucket policy.
+B. Add the VPC-E identified to the S3 bucket policy.
+C. Add the VPC identifier for the production VPC to the S3 bucket policy.
+D. Add the VPC-E identifier for the production VPC to endpoint policy.
+
+B is the right answer. Here you can check some examples about 
+how to set S3 policies based on VPC-E origin: https://docs.aws.ama
+
+47. Your hybrid networking environment consists of two application VPCs, a shared services VPC, and your corporate network.
+ The corporate network is connected to the shared services VPC via an IPsec VPN with dynamic (BGP) routing enabled.
+The applications require access to a common authentication service in the shared services VPC.
+ You need to enable native network access from the corporate network to both application VPCs.
+Which step should you take to meet the requirements?
+
+A. Use VPC peering to peer the application VPCs with the shared services VPC, 
+and enable associated routing in the shared services VPC via the corporate VPN.
+B. Configure an IPsec VPN between the virtual private gateway in each application VPC 
+to the virtual private gateway in the shared services VPC.
+C. Configure additional IPsec VPNs for each application VPC back to the corporate network, 
+and enable VPC peering to the shared services VPC.
+D. Enable CloudHub functionality to route traffic between the three VPCs and the corporate network using
+
+Answer is C.
+A, cannot associate route table to onprem with peering.
+B, VPN from VGW to VGW won't work. Need EC2 VPN or Onprem VPN to initiate the connection.
+D, CloudHub is for one VPC to multiple onprem sites.
+
+48. You use a VPN to extend your corporate network into a VPC. Instances in the VPC are able to
+ resolve resource records in an Amazon Route 53 private hosted zone. Your on-premises DNS server is configured with
+ a forwarder to the VPC DNS server IP address. On-premises users are unable to resolve names 
+in the private hosted zone, although instances in a peered VPC can.
+What should you do to provide on-premises users with access to the private hosted zone?
+
+A. Create a proxy resolver within the VPC. Point the on-premises forwarder to the proxy resolver.
+B. Modify the network access control list on the VPC to allow DNS queries from on-premises systems.
+C. Configure the on-premises server as a secondary DNS for the private zone. Update the NS records.
+D. Update the on-premises forwarders with the four name servers assigned to the private hosted zone.
+
+A is correct. Here is a link that provides some detailed explanations on resolving DNS queries between VPCs 
+and your network: https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/resolver.html
+
+49. Your organization has a newly installed 1-Gbps AWS Direct Connect connection. 
+You order the cross-connect from the Direct Connect location provider to the port on your router in the same facility.
+ To enable the use of your first virtual interface, your router must be configured appropriately.
+What are the minimum requirements for your router?
+
+A. 1-Gbps Multi Mode Fiber Interface, 802.1Q VLAN, Peer IP Address, BGP Session with MD5.
+B. 1-Gbps Single Mode Fiber Interface, 802.1Q VLAN, Peer IP Address, BGP Session with MD5.
+C. IPsec Parameters, Pre-Shared key, Peer IP Address, BGP Session with MD5
+D. BGP Session with MD5, 802.1Q VLAN, Route-Map, Prefix List, IPsec encrypted GRE Tunnel
+
+B
+
+50. Your security team implements a host-based firewall on all of your Amazon Elastic Compute Cloud (EC2)
+ instances to block all outgoing traffic. Exceptions must be requested for each specific requirement.
+ Until you request a new rule, you cannot access the instance metadata service.
+ Which firewall rule should you request to be added to your instances to allow instance metadata access?
+
+A. Inbound; Protocol tcp; Source [Instance’s EIP]; Destination 169.254.169.254
+B. Inbound; Protocol tcp; Destination 169.254.169.254; Destination port 80
+C. Outbound; Protocol tcp; Destination 169.254.169.254; Destination port 80
+D. Outbound; Protocol tcp; Destination 169 .254.169.254; Destination port 443
+
+C
+
+51. A customer has set up multiple VPCs for Dev, Test, Prod, and Management. You need to set up AWS Direct
+Connect to enable data flow from on-premises to each VPC. The customer has monitoring software running in the Management VPC that collects metrics from the instances in all the other VPCs. Due to budget requirements, data transfer charges should be kept at minimum.
+Which design should be recommended?
+A. Create a total of four private VIFs, one for each VPC owned by the customer, and route traffic between VPCs using the Direct Connect link.
+B. Create a private VIF to the Management VPC, and peer this VPC to all other VPCs.
+C. Create a private VIF to the Management VPC, and peer this VPC to all other VPCs, enable source/ destination NAT in the Management VPC.
+D. Create a total of four private VIFs, and enable VPC peering between all VPCs.
