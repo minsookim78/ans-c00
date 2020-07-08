@@ -850,3 +850,105 @@ A. Create a total of four private VIFs, one for each VPC owned by the customer, 
 B. Create a private VIF to the Management VPC, and peer this VPC to all other VPCs.
 C. Create a private VIF to the Management VPC, and peer this VPC to all other VPCs, enable source/ destination NAT in the Management VPC.
 D. Create a total of four private VIFs, and enable VPC peering between all VPCs.
+
+A Answer is "A"
+Please check this: https://d1.awsstatic.com/whitepapers/aws-amazon-vpc-connectivity-options.pdf
+Page: 22,23,24 (AWS Direct Connect)
+"AWS Direct Connect makes it easy to establish a dedicated network connection from your premises to 
+your Amazon VPC or among Amazon VPCs. This option can potentially reduce network costs, increase bandwidth throughput,
+ and provide a more consistent network experience than the other VPC-to-VPC connectivity options.
+ You can divide a physical AWS Direct Connect connection into multiple logical connections, one for each VPC.
+ You can then use these logical connections for routing traffic between VPCs"
+
+52. Your company runs an application for the US market in the us-east-1 AWS region. 
+This application uses proprietary TCP and UDP protocols on Amazon Elastic Compute Cloud (EC2) instances. 
+End users run a real- time, front-end application on their local PCs. 
+This front-end application knows the DNS hostname of the service.
+You must prepare the system for global expansion. 
+The end users must access the application with lowest latency.
+How should you use AWS services to meet these requirements?
+
+A. Register the IP addresses of the service hosts as "A" records with latency-based routing policy
+ in Amazon Route 53, and set a Route 53 health check for these hosts.
+B. Set the Elastic Load Balancing (ELB) load balancer in front of the hosts of the service, 
+and register the ELB name of the main service host as an ALIAS record with a latency-based routing policy in Route 53.
+C. Set Amazon CloudFront in front of the host of the service, and register the CloudFront name of the main service
+ as an ALIAS record in Route 53.
+D. Set the Amazon API gateway in front of the service, and register the API gateway name of the main service
+
+I think that since the questions notes that TCP and UDP are proprietary, 
+any AWS objects that intercept the packet are not going to work - 
+Cloudfront, ELB, etc. So you'll have to use DNS..answer is A.
+
+53. You deploy an Amazon EC2 instance that runs a web server into a subnet in a VPC.
+ An Internet gateway is attached, and the main route table has a default route (0.0.0.0/0) configured with
+ a target of the Internet gateway.
+The instance has a security group configured to allow as follows:
+✑ Protocol: TCP
+✑ Port: 80 inbound, nothing outbound
+The Network ACL for the subnet is configured to allow as follows:
+✑ Protocol: TCP
+✑ Port: 80 inbound, nothing outbound
+When you try to browse to the web server, you receive no response.
+Which additional step should you take to receive a successful response?
+A. Add an entry to the security group outbound rules for Protocol: TCP, Port Range: 80
+B. Add an entry to the security group outbound rules for Protocol: TCP, Port Range: 1024-65535
+C. Add an entry to the Network Acl outbound rules for Protocol: TCP, Port Range: 80
+D. Add an entry to the Network Acl outbound rules for Protocol: TCP, Port Range: 1024-65535
+
+ D - When the reply packet goes from the web server to internet,
+source port =80
+destination port = can be anything between 1024-65535
+Since NACLs looks at the destination port answer should be D
+
+
+54. An organization launched an IPv6-only web portal to support IPv6-native mobile clients.
+ Front-end instances launch in an Amazon VPC associated with an appropriate IPv6 CIDR. 
+The VPC IPv4 CIDR is fully utilized. A single subnet exists in each of two Availability Zones with 
+appropriately configured IPv6 CIDR associations.
+Auto Scaling is properly configured, and no Elastic Load Balancing is used.
+Customers say the service is unavailable during peak load times. 
+The network engineer attempts to launch an instance manually and receives the following message: 
+"There are not enough free addresses in subnet
+‘subnet-12345677’ to satisfy the requested number of instances."
+What action will resolve the availability problem?
+
+A. Create a new subnet using a VPC secondary IPv6 CIDR, and associate an IPv6 CIDR. 
+Include the new subnet in the Auto Scaling group.
+B. Create a new subnet using a VPC secondary IPv4 CIDR, and associate an IPv6 CIDR. 
+Include the new subnet in the Auto Scaling group.
+C. Resize the IPv6 CIDR on each of the existing subnets. 
+Modify the Auto Scaling group maximum number of instances.
+D. Add a secondary IPv4 CIDR to the Amazon VPC. Assign secondary IPv4 address space to each of the
+
+B.
+
+55. A Network Engineer is designing a new system on AWS that will take advantage of
+ Amazon CloudFront for both content caching and for protecting the underlying origin. 
+There is concern that an external agency might be able to access the IP addresses for the applications origin 
+and then attack the origin despite it being served by CloudFront.
+ Which of the following solutions provides the strongest level of protection to the origin?
+
+A. Use an IP whitelist rule in AWS WAF within CloudFront to ensure that
+ only known-client IPs are able to access the application.
+B. Configure CloudFront to use a custom header and configure an AWS WAF rule 
+on the origins Application Load Balancer to accept only traffic that contains that header.
+C. Configure an AWS Lambda@Edge function to validate that
+ the traffic to the Application Load Balancer originates from CloudFront.
+D. Attach an origin access identity to the CloudFront origin that allows traffic to the origin that originates from
+
+B , Origin Access identity is only valid for s3 origin not ec2 or ALB
+
+56. A network engineer is managing two AWS Direct Connect connections.
+ Each connection has a public virtual interface configured with a private ASN. 
+The engineer wants to configure active/passive routing between the
+Direct Connect connections to access Amazon public endpoints.
+ What BGP configuration is required for the on-premises equipment? (Select two.)
+
+A. Use Local Pref to control outbound traffic.
+B. Use AS Prepending to control inbound traffic.
+C. Use eBGP multi-hop between loopback interfaces.
+D. Use BGP Communities to control outbound traffic.
+E. Advertise more specific prefixes over one Direct Connect connection.
+
+A and E are the correct answers.
