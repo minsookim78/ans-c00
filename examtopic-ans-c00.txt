@@ -952,3 +952,721 @@ D. Use BGP Communities to control outbound traffic.
 E. Advertise more specific prefixes over one Direct Connect connection.
 
 A and E are the correct answers.
+
+57. You are preparing to launch Amazon WorkSpaces and need to configure the appropriate networking resources.
+ What must be configured to meet this requirement?
+
+A. At least two subnets in different Availability Zones.
+B. A dedicated VPC with Active Directory Services.
+C. An IPsec VPN to on-premises Active Directory
+D. Network address translation for outbound traffic.
+
+Answer is A. You can deploy workspaces in Public Subnet and thus NAT is not a requirement.
+ NAT Is only needed when Workspaces are in private subnets. 2 Subnets are required
+
+58. You have multiple Amazon Elastic Compute Cloud (EC2) instances running a web server in a VPC 
+configured with security groups and NACL. You need to ensure layer 7 protocol level logging of all network traffic
+(ACCEPT/REJECT) on the instances. What should be enabled to complete this task?
+
+A. CloudWatch Logs at the VPC level
+B. Packet sniffing at the instance level
+C. VPC flow logs at the subnet level
+D. Packet sniffing at the VPC level
+
+Flow logs are L4 only. The question clearly says L7 logging. 
+The decision is between B&D. There is no way/option to take packet captures at a VPC level,
+ you have to do it at interface level so its B.
+
+59. Your company operates a single AWS account.
+ A common services VPC is deployed to provide shared services, such as network scanning and compliance tools. 
+Each AWS workload uses its own VPC, and each
+VPC must peer with the common services VPC. You must choose the most efficient and cost effective approach.
+Which approach should be used to automate the required VPC peering?
+
+A. AWS CloudTrail integration with Amazon CloudWatch Logs to trigger a Lambda function.
+B. An OpsWorks Chef recipe to execute a command-line peering request.
+C. Cfn-init with AWS CloudFormation to execute a command-line peering request.
+D. An AWS CloudFormation template that includes a peering request.
+
+What about D
+https://cloakable.irdeto.com/2017/10/11/how-to-implement-vpc-peering-between-2-vpcs-in-the-same-aws-account-using-cloudformation
+
+60. Your organization requires strict adherence to a change control process for its Amazon Elastic Compute Cloud
+(EC2) and VPC environments. The organization uses AWS CloudFormation as the AWS service to control and implement changes.
+ Which combination of three services provides an alert for changes made outside of AWS
+CloudFormation? (Select three.)
+
+A. AWS Config
+B. AWS Simple Notification Service
+C. AWS CloudWatch metrics
+D. AWS Lambda
+E. AWS CloudFormation
+F. AWS Identify and Access Management
+
+A,B,D  ??
+* AWS Config will see all configuration changes an be able to fire a trigger towards AWS Lambda for it.
+* AWS Lambda will be able to determine if the change was caused due to CloudFormation, in which case nothing happens.
+ If the change was not due to CloudFormation the AWS Lambda process will call AWS Simple Notification Service.
+* AWS Simple Notification Service will send out the alert.
+
+61. You have a global corporate network with 153 individual IP prefixes in your internal routing table.
+ You establish a private virtual interface over AWS Direct Connect to a VPC that has an Internet gateway (iGW). 
+All instances in the VPC must be able to route to the Internet via an IGW and route to the global corporate network via the
+VGW.
+How should you configure your on-premises BGP peer to meet these requirements?
+A. Configure AS-Prepending on your BGP session
+B. Summarize your prefix announcement to less than 100
+C. Announce a default route to the VPC over the BGP session
+D. Enable route propagation on the VPC route table
+
+answer is B. Check the BGP session if it changes from established to idle state
+
+For private Direct Connect VIFs, verify the number of routes that you are advertising over the BGP session.
+ If you are advertising more than 100 routes over the BGP session, the BGP session will go into an idle state. 
+Summarize the routes so the number of advertised routes is less than 100, or advertise a default route over the BGP session to AWS.
+
+62. You are building an application that provides real-time audio and video services to customers on the Internet.
+The application requires high throughput. To ensure proper audio and video transmission, minimal latency is required.
+Which of the following will improve transmission quality?
+A. Enable enhanced networking
+B. Select G2 instance types
+C. Enable jumbo frames
+D. Use multiple elastic network interfaces
+
+A is correct. With G3 instances, Enhanced Networking using the Elastic Network Adapter (ENA)
+ with 25 Gbps of aggregate network bandwidth within a Placement Group.
+Link: https://aws.amazon.com/ec2/instance-types/
+
+63. The Payment Card Industry Data Security Standard (PCI DSS) merchants that handle credit card data must use strong cryptography.
+ These merchants must also use security protocols to protect sensitive data during transmission over public networks.
+You are migrating your PCI DSS application from on-premises SSL appliance and Apache to a VPC behind
+Amazon CloudFront.
+How should you configure CloudFront to meet this requirement?
+
+A. Configure the CloudFront Cache Behavior to require HTTPS and the CloudFront Origin’s Protocol Policy to ‘Match Viewer’.
+B. Configure the CloudFront Cache Behavior to allow TCP connections and to forward all requests to the origin
+   without TLS termination at the edge.
+C. Configure the CloudFront Cache Behavior to require HTTPS and to forward requests to the origin via AWS Direct Connect.
+D. Configure the CloudFront Cache Behavior to redirect HTTP requests to HTTPS and to forward request to
+
+A. Ref: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/distribution-web-values-specify.html#DownloadDistValuesOriginProtocolPolicy
+
+64. You deploy your Internet-facing application is the us-west-2(Oregon) region.
+ To manage this application and upload content from your corporate network, 
+you have a 1Gbps AWS Direct Connect connection with a private virtual interface via one of the associated Direct Connect locations. 
+In normal operation, you use approximately 300 Mbps of the available bandwidth,
+ which is more than your Internet connection from the corporate network.
+You need to deploy another identical instance of the application is us-east-1(N Virginia) as soon as possible.
+You need to use the benefits of Direct Connect. Your design must be the most effective solution regarding cost,
+ performance, and time to deploy.
+Which design should you choose?
+
+A. Use the inter-region capabilities of Direct Connect to establish a private virtual interface
+ from us-west-2 Direct Connect location to the new VPC in us-east-1.
+B. Deploy an IPsec VPN over your corporate Internet connection to us-east-1 to provide access to the new VPC.
+C. Use the inter-region capabilities of Direct Connect to deploy an IPsec VPN over a public virtual interface 
+to the new VPC in us-east-1.
+D. Use VPC peering to connect the existing VPC in us-west-2 to the new VPC in us-east-1, and then route
+
+
+The question is about cost-efficient, performance and time to deploy
+b: performance is worse than the DX, because the bandwidth can not be guaranteed. not correct
+c: public virtual interface to access a different VPC. not correct
+d: peering does not work, because it has to be congealed to the corporate network. Keyword transitive routing. not correct
+
+a: DX and inter-region capabilities, private virtual interface.
+it is efficent, fast to deploy, has a good performance and takes advantage of the DX. correct answer.
+
+65. Your company has a 1-Gbps AWS Direct Connect connection to AWS. 
+Your company needs to send traffic from on-premises to a VPC owned by a partner company.
+ The connectivity must have minimal latency at the lowest price.
+Which of the following connectivity options should you choose?
+
+A. Create a new Direct Connect connection, and set up a new circuit to connect to the partner VPC using a private virtual interface.
+B. Create a new Direct Connect connection, and leverage the existing circuit to connect to the partner VPC.
+C. Create a new private virtual interface, and leverage the existing connection to connect to the partner VPC.
+D. Enable VPC peering and use your VPC as a transitive point to reach the partner VPC.
+
+Source - On prem
+Destination - Partner company VPC
+This traffic flow will be not routed by the direct connect owned vpc because neither the source or
+ destination is not an IP address associated with it. I think the answer is C
+
+1-3. An organization wants to process sensitive information using the Amazon EMR service. 
+The information is stored in on-premises databases. The output of processing will be encrypted using AWS KMS
+ before it is uploaded to a customer-owned Amazon S3 bucket. 
+The current configuration includes a VPS with public and private subnets, with VPN connectivity to the on-premises network. 
+The security organization does not allow Amazon EC2 instances to run in the public subnet.
+What is the MOST simple and secure architecture that will achieve the organization's goal?
+
+A. Use the existing VPC and configure Amazon EMR in a private subnet with an Amazon S3 endpoint.
+B. use the existing VPS and a NAT gateway, and configure Amazon EMR in a private subnet with an Amazon S3 endpoint.
+C. Create a new VPS without an IGW and configure the VPN and Amazon EMR in a private subnet with an Amazon S3 endpoint.
+D. Create a new VPS without an IGW and configure the VPN and Amazon EMR in a private subnet with an Amazon S3 endpoint 
+and a NAT gateway.
+
+Answer: B
+A - incorrect - needs access to the internet for KMS, thus NAT gateway/instance
+B - correct
+C - incorrect - requires internet access to access KMS, no NAT, no IGW
+D - incorrect - requires internet access for the NAT gateway, no IGW, this no KMS access
+
+S3 endpoint given in all answers, no internet access required
+
+Encrypting/Decrypting S3 objects using CSE-KMS, requires
+- access to a KMS VPC endpoint interface (which was not specified); or
+- access to the public AWS KMS service over the internet
+
+Given a KMS VPC endpoint is not mentioned, Internet access is needed (via IGW)
+- ref https://docs.aws.amazon.com/kms/latest/developerguide/services-emr.html
+- ref https://docs.aws.amazon.com/kms/latest/developerguide/kms-vpc-endpoint.html (CSE-KMS)
+(Rules out C,D)
+
+Thus, if an EMR (EC2) cluster is in a "private" network, it requires both
+- a NAT instance or NAT Gateway
+- an IGW to access the internet (public KMS service)
+(Rules out A, C, D)
+Assumes VPS is VPC, given you can't attach an IGW to a VPS
+
+1-4. An organization has three AWS accounts with each containing VPCs in Virginia, Canada and the Sydney regions. 
+The organization wants to determine whether all available Elastic IP addresses (EIPs) in these accounts are attached to
+ Amazon EC2 instances or in use elastic network interfaces (ENIs) in all of the specified regions for compliance and 
+cost-optimization purposes.
+Which of the following meets the requirements with the LEAST management overhead?
+
+A. use an Amazon CloudWatch Events rule to schedule an AWS Lambda function in each account in
+ all three regions to find the unattached and unused EIPs.
+B. Use a CloudWatch event bus to schedule Lambda functions in each account in
+ all three regions to find the unattached and unused EIPs.
+C. Add an AWS managed, EIP-attached AWS Config rule in each region in 
+all three accounts to find unattached and unused EIPs.
+D. Use AWS CloudFormation StackSets to deploy an AWS Config EIP-attached rule in all accounts and 
+regions to find the unattached and unused EIPs
+
+D is answer - same as C but Least management overhead  ??
+A stack set lets you create stacks in AWS accounts across regions by using a single AWS CloudFormation template. 
+All the resources included in each stack are defined by the stack set's AWS CloudFormation template.
+ As you create the stack set, you specify the template to use, as well as any parameters and capabilities that template requires.
+
+
+1-5. A Systems Administrator is designing a hybrid DNS solution with spilt-view. 
+The apex-domain "example.com" should be served through name servers across multiple top-level domains (TLDs). 
+The name server for subdomain "dev.example.com" should reside on-premises. The administrator has decided to use Amazon
+Route 53 to achieve this scenario.
+What procedurals steps must be taken to implement the solution?
+
+A. Use a Route 53 public hosted zone for example.com and a private hosted zone for dev.example.com
+B. Use a Route 53 public and private hosted zone for example.com and perform subdomain delegation for dev.example.com
+C. Use a Route 53 public hosted zone for example.com and perform subdomain delegation for dev.example.com
+D. Use a Route 53 private hosted zone for example.com and perform subdomain delegation for dev.example.com
+
+Answer is B
+https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/hosted-zone-private-considerations.html --> check Split-view DNS
+
+1-6. DNS name resolution must be provided for services in the following four zones: 
+company.private.
+ emea.company.private. 
+apac.company.private. 
+amer.company.private.
+The contents of these zones is not considered sensitive, however, the zones only need to be 
+used by services hosted in these VPCs, one per geographic region.
+Each VPC should resolve the names in all zones.
+How can you use Amazon route 53 to meet these requirements?
+
+A. Create a Route 53 Private Hosted Zone for each of the four zones and associate them with the three VPCs.
+B. Create a single Route 53 Private Hosted Zone for the zone company.private and associate it with the three VPCs.
+C. Create a Route Public Hosted Zone for each of the four zones and configure the VPS DNS Resolver to forward
+D. Create a single Route 53 Public Hosted Zone for the zone company.private and configure the VPS DNS Resolver to forward
+
+Answer: B
+(Support for overlapping zones is new Nov 2019, not when this exam was written, otherwise A)
+
+You can create record sets (A, SRV, TXT, etc) with multi-level subdomains. For instance in the zone [company.private], we can create A records
+globalserver.[company.private]
+apacserver1.apac.[company.private]
+amerserver5.amer.[company.private]
+mail.emea.[company.private]
+emea.[company.private]
+From a client perspective in this scenario, this is no different than creating a sub zone with the record.
+
+1-7. An organization is replacing a tape backup system with a storage gateway. there is currently no connectivity to AWS.
+ Initial testing is needed.
+What connection option should the organization use to get up and running at minimal cost?
+
+A. Use an internet connection.
+B. Set up an AWS VPN connection.
+C. Provision an AWS Direct Connection private virtual interface.
+D. Provision a Direct Connect public virtual interface.
+
+A.
+
+1-8. All IP addresses within a 10.0.0.0/16 VPC are fully utilized with application servers across two Availability Zones. 
+The application servers need to send frequent
+UDP probes to a single central authentication server on the Internet to confirm that is running up-to-date packages.
+ The network is designed for application servers to use a single NAT gateway for internal access. 
+Testing reveals that a few of the servers are unable to communicate with the authentication server.
+
+A. The NAT gateway does not support UDP traffic.
+B. The authentication server is not accepting traffic.
+C. The NAT gateway cannot allocate more ports.
+D. The NAT gateway is launched in a private subnet.
+
+C. Ref: https://docs.aws.amazon.com/vpc/latest/userguide/vpc-nat-gateway.html
+"A NAT gateway can support up to 55,000 simultaneous connections to each unique destination. 
+This limit also applies if you create approximately 900 connections per second to a single destination 
+(about 55,000 connections per minute). If the destination IP address, the destination port, or 
+the protocol (TCP/UDP/ICMP) changes, you can create an additional 55,000 connections. For more than 55,000 connections, 
+there is an increased chance of connection errors due to port allocation errors. These errors can be monitored by
+ viewing the ErrorPortAllocation CloudWatch metric for your NAT gateway. For more information, see Monitoring 
+NAT Gateways Using Amazon CloudWatch."
+
+1-9. An organization is using a VPC endpoint for Amazon S3. When the security group rules for a set of instances 
+were initially configured, access was restricted to allow traffic only to the IP addresses of the Amazon S3 API endpoints 
+in the region from the published JSON file. The application was working properly, but now is logging a growing number
+ of timeouts when connecting with Amazon S3. No internet gateway is configured for the VPC.
+Which solution will fix the connectivity failures with the LEAST amount of effort?
+
+A. Create a Lambda function to update the security group based on AmazonIPSpaceChanged notifications.
+B. Update the VPC routing to direct Amazon S3 prefix-list traffic to the VPC endpoint using the route table APIs.
+C. Update the application server's outbound security group to use the prefix-list for Amazon S3 in the same region.
+D. Create an additional VPC endpoint for Amazon S3 in the same route table to scale the concurrent connections to Amazon.
+
+Its C. They say that when the SG was made, they looked at the IPs published in the Prefix list at the time. 
+These IPs change hence they recommend never to put IPs manually and use the prefix list instead. Hence,
+ C is the right approach to use the prefix-list so when the IPs change, they will be automatically updated by AWS.
+
+1-10. A bank built a new version of its banking application in AWS using containers that content to an on-premises database 
+over VPN connection. This application version requires users to also update their client application. 
+The bank plans to deprecate the earlier client version. However, the company wants to keep supporting 
+earlier clients through their on-premises version of the application to serve a small portion of the customers 
+who haven't yet upgraded.
+What design will allow the company to serve both newer and earlier clients in the MOST efficient way?
+
+A. Use an Amazon Route 53 multivalue answer routing policy to route older client traffi
+c to the on-premises application version and the rest of the traffic to the new AWS based version.
+B. Use a Classic Load Balancer for the new application. Route all traffic to the new application
+ by using an Elastic Load Balancing (ELB) load balancer DNS. Define a user-agent-based rule on the backend servers to redirect earlier clients to the on-premises application.
+C. Use an Application Load Balancer for the new application. Register both the new and 
+earlier applications as separate target groups and use path-based routing to route traffic based on the application version.
+D. Use an Application Load Balancer for the new application. Register both the new and
+ earlier application backends as separate target groups. Use header- based routing to route traffic based on the application version.
+
+I'll go for D. User-Agent is a HTTP Header which Contains a characteristic string that allows the network protocol
+ peers to identify the application type, operating system, software vendor or software version of the requesting 
+software user agent. ALB has the capability to route based on headers, no other ELB has that capability.
+C could be true but they dont mention if the new and old apps have different URLs so D is the likely answer IMO
+
+1-11. A company is deploying a non-web application on an AWS load balancer. All targets are servers located on-premises 
+that can be accessed by using AWS Direct
+Connect. The company wants to ensure that the source IP addresses of clients connecting to the application are passed
+ all the way to the end server.
+How can this requirement be achieved?
+
+A. Use a Network Load Balancer to automatically preserve the source IP address.
+B. Use a Network Load Balancer and enable the X-Forwarded-For attribute.
+C. Use a Network Load Balancer and enable the ProxyProtocol v2 attribute.
+D. Use an Application Load Balancer to automatically preserve the source IP address in the X-Forwarded-For header.
+
+Its C. The trick here is that the instances are on-prem. NLB automatically preserves Source IP
+ if the target is created using the EC2 Instance-id and not hard coded IP.
+ As the backend servers are on-prem, A cant preserve source IP.
+
+The Proxy Protocol v2 is an option in NLB which appends the source IP in the TCP packet header.
+ https://docs.aws.amazon.com/elasticloadbalancing/latest/network/load-balancer-target-groups.html#proxy-protocol
+
+1-12. An AWS CloudFormation template is being used to create a VPC peering connection between two existing operational VPCs, 
+each belonging to a different AWS account. All necessary components in the "˜Remote' (receiving) account are already in place.
+The template below creates the VPC peering connection in the Originating account. It contains these components:
+AWSTemplateFormation Version: 2010-09-09
+Parameters:
+Originating VCId:
+
+Type: String -
+RemoteVPCId:
+
+Type: String -
+RemoteVPCAccountId:
+
+Type: String -
+Resources:
+newVPCPeeringConnection:
+Type: "˜AWS::EC2::VPCPeeringConnection'
+Properties:
+
+VpcdId: !Ref OriginatingVPCId -
+
+PeerVpcId: !Ref RemoteVPCId -
+PeerOwnerId: !Ref RemoteVPCAccountId
+Which additional AWS CloudFormation components are necessary in the Originating account to create an operational
+ cross-account VPC peering connection with AWS CloudFormation? (Select two.)
+
+A. Resources: NewEC2SecurityGroup: Type: AWS::EC2::SecurityGroup
+B. Resources: NetworkInterfaceToRemoteVPC: Type: "AWS::EC2NetworkInterface"
+C. Resources: newEC2Route: Type: AWS::EC2::Route
+D. Resources: VPCGatewayToRemoteVPC: Type: "AWS::EC2::VPCGatewayAttachment"
+E. Resources: newVPCPeeringConnection: Type: "˜AWS::EC2VPCPeeringConnection' PeerRoleArn: !Ref PeerRoleArn
+
+Its A and C. You setup route and security group with CIDR of remote VPC
+E is not even an option in EC2 CloudFormation: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/AWS_EC2.html
+A. Nope. No SG requirements given.
+B. Nope.
+D. IGW / VGW. Nope.
+C. Yes. Add route to route table to make VPC-peering routable/reachable.
+E. Yes. As this is cross-account, you must specify an IAM role if cross account.
+Answer. C E
+
+1-13. A Network Engineer is provisioning a subnet for a load balancer that will sit in front of 
+a fleet of application servers in a private subnet. There is limited IP space left in the VPC CIDR.
+The application has few users now but is expected to grow quickly to millions of users.
+What design will use the LEAST amount of IP space, while allowing for this growth?
+
+A. Use two /29 subnets for an Application Load Balancer in different Availability Zones.
+B. Use one /29 subnet for the Network Load Balancer. Add another VPC CIDR to the VPC to allow for future growth.
+C. Use two /28 subnets for a Network Load Balancer in different Availability Zones.
+D. Use one /28 subnet for an Application Load Balancer. Add another VPC CIDR to the VPC to allow for future growth.
+
+answer is C,It says million of users.Only NLB can do it.
+ if only the NLB support millions of user then the right answer is C. But i don't know why is not enough with a /29 instead /28.
+
+1-14. A network engineer is deploying an application on an Amazon EC2 instance. 
+The instance is reachable within the VPC through its private IP address and from the internet using an elastic IP address. 
+Clients are connecting to the instance over the Internet and within the VPC, 
+and the application needs to be identified by a single custom Fully Qualified Domain Name 
+that is publicly resolvable """˜app.example.com'.
+Instances within the VPC should always connect to the private IP to minimize data transfer costs.
+How should the engineer configure DNS to supprot these requirements?
+
+A. Use Amazon Route 53 to create a geo-based routing entry for the hostname "˜app' in the DNS zone "˜example.com'.
+B. Create two A record entries for "˜app' in the DNS zone "˜example.com' "" one for the public IP and one for the private IP.
+C. Use Route 53 to create an ALIAS record to the public DNS name for the instance.
+D. Create a CNAME for "˜app' in the DNS zone "˜example.com' to the public DNS name for the Amazon EC2 instance.
+
+B> Spilt-View DNS  or D ???
+
+1-15. A company uses a single connection to the internet when connecting its on-premises location to AWS. 
+It has selected an AWS Partner Network (APN) Partner to provide a point-to-point circuit for its first-ever 10 Gbps 
+AWS Direct Connect connection.
+What steps must be taken to order the cross-connect at the Direct Connect location?
+
+A. Obtain the LOA/CFA from the APN Partner when ordering connectivity. 
+Upload it to the AWS Management Console when creating a new Direct Connect connection. 
+AWS will ensure that the cross-connect is installed.
+B. Obtain the LOA/CFA from the AWS Management Console when ordering the Direct Connect connection. 
+Provide it to the APN Partner when ordering connectivity. The Direct Connect partner will ensure that the cross-connect is installed.
+C. Obtain the LOA/CFA each from the AWS Management Console and the APN Partner. 
+Provide both to the Facility Operator of the Direct Connect location. The Facility Operatir will ensure that the cross-connect is installed.
+D. Identify the APN Partner in the AWS Management Console when creating the Direct Connect connection. 
+Provide the resulting Connection ID to the APN Partner, who will ensure that the cross-connect is installed.
+
+B : https://docs.aws.amazon.com/directconnect/latest/UserGuide/create-connection.html
+
+1-18. An organization's Security team has a requirement that all data leaving its on-premises data center
+ be encrypted at the network layer and use dedicated connectivity. 
+There is also a requirement to centrally log all traffic flow in Amazon VPC environments. 
+An AWS Direct Connect connection has been ordered to build out this design.
+What steps should be taken to ensure that connectivity to AWS meets these security requirements? (Choose two.)
+
+A. Provision a public virtual interface on AWS Direct Connect and set up a VPN to each VPC.
+B. Provision a private virtual interface for each VPC connection.
+C. Enable VPC Flow Logs for each VPC.
+D. Use AWS KMS to encrypt traffic between on-premises and AWS.
+E. Provision a VPN connection to each VPC over the internet.
+
+B. No network security.
+D. same as above.
+E. Question states DX link is available. Nope.
+C. Yes.
+A. Yes.
+It cannot be PVIF - it has no encryption. There is only viable answer with the question stating the con
+
+1-19. A company has an application running on Amazon EC2 instances in a private subnet that connects to 
+a third-party service provider's public HTTP endpoint through a NAT gateway. 
+As request rates increase, new connections are starting to fail. 
+At the same time, the ErrorPortAllocation Amazon CloudWatch metric count for the NAT gateway is increasing.
+Which of the following actions should improve the connectivity issues? (Choose two.)
+
+A. Allocate additional elastic IP addresses to the NAT gateway.
+B. Request that the third-party service provider implement HTTP keepalive.
+C. Implement TCP keepalive on the client instances.
+D. Create additional NAT gateways and update the private subnet route table to introduce the new NAT gateways.
+E. Create additional NAT gateways in the public subnet and split client instances into multiple private subnets, 
+each with a route to a different NAT gateway.
+
+C, and E.
+https://aws.amazon.com/premiumsupport/knowledge-center/vpc-resolve-port-allocation-errors/
+Limit the number of connections that clients can make to a single destination.
+ Keeplive reduce the number of new connection establish.
+
+1-20. An application runs on a fleet of Amazon EC2 instances in a VPC. 
+All instances can reach one another using private IP addresses. 
+The application owner has a new requirement that the domain name received via DHCP should be 
+different for a particular set of instances that are currently in one particular subnet.
+What changes should be made to meet this requirement while continuing to support the existing application requirements?
+
+A. Modify the existing DHCP option set and specify the different domain name for the specified subnet.
+B. Create a new DHCP option set with the different domain name, associate it with the specified subnet, 
+and re-launch the Amazon EC2 instances.
+C. Create a new subnet, configure the DHCP option set with the different domain name, and re-launch the required instances there.
+D. Create a new peered VPC, configure the DHCP option set with the different domain name, and re-launch the required instances there.
+
+D. Because DHCP option is only associated with VPC.
+
+1-21. A Network Engineer has enabled VPC Flow Logs to troubleshoot an ICMP reachability issue for 
+an echo reply from an Amazon EC2 instance. The flow logs reveal an ACCEPT record for the request from
+ the client to the EC2 instance, and a REJECT record for the response from the EC2 instance to the client.
+What is the MOST likely reason for there to be a REJECT record?
+
+A. The security group is denying inbound ICMP.
+B. The network ACL is denying inbound ICMP.
+C. The security group is denying outbound ICMP.
+D. The network ACL is denying outbound ICMP.
+
+D. Security group is state full, since inbound is allow, outbound is allow to
+
+1-22. An organization has multiple applications running in VPCs across multiple AWS accounts. 
+The network engineer has deployed a central VPC with a pair of software VPN instances that 
+run IPSec tunnels with dynamic routing to VGWs of all application VPCs. This central VPC is connected to
+ on-premises resources via a Direct Connect connection using a private VIF.
+What additional configuration is required to enable the applications in VPCs to communicate with 
+each other and access on-premises resources?
+
+A. Configure each application VPC with a static route entry pointing the on-premises CIDR block to the software VPN instances.
+B. Configure the central VPC with a static route entry pointing the on-premises CIDR block to local VGWs.
+C. Advertise all application VPC CIDR blocks to on-premises resources via the VGW in the central VPC.
+D. Configure IPSec tunnels from the on-premises router into the software VPN instances with dynamic routing.
+
+C. To leverage the dynamic routing already in place    D??
+the VGW is not directly attached to the VPC => https://docs.aws.amazon.com/solutions/latest/cisco-based-transit-vpc/appendix-d.html
+
+1-23. A Network Engineer needs to create a public virtual interface on the company's AWS Direct Connect connection
+ and only import routes which originated from the same region as the Direct Connect location
+What action should accomplish this?
+
+A. Configure a prefix list on the customer router containing the AWS IP address ranges for the specific region.
+B. Configure a filter on the company's router to only import routes with the 7224:8100 BGP community attribute.
+C. Configure a filter on the company's router to only import routes without a BGP community attribute and a maximum path length of 3.
+D. Configure a filter in the console and only allow routes advertised by AWS 
+without a BGP community attribute and a maximum path length of 3.
+
+AWS Direct Connect applies the following BGP communities to its advertised routes:
+
+Answer - B
+https://docs.aws.amazon.com/directconnect/latest/UserGuide/routing-and-bgp.html
+7224:8100—Routes that originate from the same AWS Region in which the AWS Direct Connect point of presence is associated.
+
+1-24. A network engineer has configured a private hosted zone using Amazon Route 53.
+ The engineer needs to configure health checks for record sets within the zone that are associated with instances.
+How can the engineer meet the requirements?
+
+A. Configure a Route 53 health check to a private IP associated with the instances inside the VPC to be checked.
+B. Configure a Route 53 health check pointing to an Amazon SNS topic that notifies an
+ Amazon CloudWatch alarm when the Amazon EC2 StatusCheckFailed metric fails.
+C. Create a CloudWatch metric that checks the status of the EC2 StatusCheckFailed metric,
+ add an alarm to the metric, and then create a health check that is based on the state of the alarm.
+D. Create a CloudWatch alarm for the StatusCheckFailed metric and choose Recover this instance, selecting a threshold value of 1.
+
+C - https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/dns-failover-private-hosted-zones.html
+
+1-25. An architecture is being designed to support an Amazon WorkSpaces deployment of 1,000 desktops.
+Which architecture will support this deployment while allowing for future expansion?
+
+A. A VPC with a /16 CIDR and one /21 subnet
+B. A VPC with a /20 CIDR and two /21 subnets
+C. A VPC with a /16 CIDR and one /22 subnet
+D. A VPC with a /20 CIDR and two /23 subnets
+
+B or D??
+Each desktop requires two NIC - primary network interface (eth1) and management network interface (eth0). 
+Requires two subnets - both subnet can be private with NATGW.
+ This means 1 desktop requires 2 x IPs in two subnets; 1000 desktops requires 2 x 1000 IPs in two subnets.
+D. /23 gives us 512 IPs - not an option for 1000 desktop
+C. one /22 - WorkSpaces requires 2 x VPC subnets
+B. two /21 within a /20 - this is a good one to host 1000 primary interface eth1 + 1000 management IPs eth0
+A. one /21 - WorkSpaces requires 2 x VPC subnets
+
+1-26. An organization is deploying an application in a VPC that requires SSL mutual authentication with 
+a client-side certificate, as that is the primary method of identifying clients. 
+The Network Engineer has been tasked with defining the mechanism used within AWS to provide the SSL mutual authentication.
+Which of the following options meets the organization's requirements?
+
+A. Use a Classic Load Balancer and upload the client certificate private keys to it.
+ Perform SSL mutual authentication of the client-side certificate there.
+B. Use a Network Load Balancer with a TCP listener on port 443, and pass the request through for 
+the SSL mutual authentication to be handled by a backend instance.
+C. Use an Application Load Balancer and upload the client certificate private keys to it 
+by using the native server name indication (SNI) features with smart certificate selection to handle multiple calling applications.
+D. Front the application with Amazon API Gateway, and use its client-side SSL mutual authentication feature 
+that uses the backend instances to verify the source of the request.
+
+B. Interestingly both ELB and ALB none does support SSL mutual authentication.
+ NLB can pass-through the request to backend EC2 and mutual SSL auth is managed by EC2.
+A - incorrect - not possible to upload certificates to the Classic Load Balancer - 
+upload to ACM or IAM. Plus client cert private keys would be kept with the client
+B - correct - Configure NLB for TCP, which is in effect pass-through. 
+Application [web] service is where client side authentiction is enabled.
+C - incorrect - cannot use the ALB to perform client side authentication. 
+it performs server-side authentication. Also, client-side auth keeps the private key with the client, not the server
+D - incorrect - no such thing as mutual auth feature in API gateway - its could be provided by other backend services
+
+1027. A network architect is designing an internet website. It has web, application, and database tiers 
+that will run in AWS. The website uses Amazon DynamoDB.
+Which architecture will minimize public exposure of the back-end instances?
+
+A. A VPC with public subnets for the NLB, public subnets for the web tier, 
+private subnets for the application tier, and private subnets for DynamoDB.
+B. A VPC with public subnets for the ALB, private subnets for the web tier, 
+and private subnets for the application tier. The application tier connects DynamoDB through a VPC endpoint.
+C. A VPC with public subnets for the ALB, public subnets for the web tier,
+ private subnets for the application tier, and private subnets for DynamoDB.
+D. A VPC with public subnets for the NLB, private subnets for the web tier, 
+and public subnets for the application tier. The application tier connects DynamoDB through a VPC endpoint.
+
+B - https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/vpc-endpoints-dynamodb.html
+
+1-28. A company is connecting to a VPC over an AWS Direct Connect using a private VIF, 
+and a dynamic VPN connection as a backup. The company's Reliability
+Engineering team has been running failover and resiliency tests on the network and 
+the existing VPC by simulating an outage situation on the Direct Connect connection.
+ During the resiliency tests, traffic failed to switch over to the backup VPN connection.
+How can this failure be troubleshot?
+
+A. Ensure that Bidirectional Forwarding Detection is enabled on the Direct Connect connection
+B. Confirm that the same routes are being advertised over both the VPN and Direct Connect.
+C. Reconfigure the Direct Connect session from static routes to Border Gateway Protocol (BGP) peering.
+D. Configure a virtual private gateway for the VPN and another virtual private gateway for Direct Connect.
+
+Question is a lot simpler when broken down.
+A. Nope. BFD gives use quicker detection time, if the same routes are not being advertised then this makes no difference. 
+There will be no routes in the routing table so there will be no routing.
+C. Nope. Cannot configure DX with static routes.
+D. Nope. You need to nail DX + VPN to same VGW for failover to work.
+B. Yes. Same routes being advertised, DX will always be preferred. When DX link goes down, BGP state machine kicks in, eventually the VPN routes should be installed in routing table.
+Answer is B.
+
+1-29. An organization is migrating its on-premises applications to AWS by using a lift-and-shift approach,
+ taking advantage of managed AWS services wherever possible.
+ The company must be able to edit the application code during the migration phase.
+ One application is a traditional three-tier application, consisting of a web presentation tier,
+ an application tier, and a database tier. 
+The external calling client applications need their sessions to remain sticky to
+ both the web and application nodes that they initially connect to.
+Which load balancing solution would allow the web and application tiers
+ to scale horizontally independent from one another other?
+
+A. Use an Application Load Balancer at the web tier and a Classic Load Balancer at the application tier.
+ Set session stickiness on both, but update the application code to create an application-controlled cookie on the Classic Load Balancer.
+B. Use an Application Load Balancer at both the web and application tiers, 
+setting session stickiness at the target group level for both tiers.
+C. Deploy a web node and an application node as separate containers on the same host, 
+using task linking to create a relationship between the pair. Add an Application Load Balancer with
+ session stickiness in front of all web node containers.
+D. Use a Network Load Balancer at the web tier, and an Application Load Balancer at the application tier.
+ Enable session stickiness on the Application Load Balancer, but take advantage of the 
+native WebSockets protocols available to the Network Load Balancer.
+
+Based on the above and the following statement: "If you are using multiple layers of Application Load Balancers, 
+you can enable sticky sessions on one layer only, because the load balancers would use the same cookie name.",
+ it appears that Answer D is correct.
+
+1-30. A team implements a highly available solution using Amazon AppStream 2.0. 
+The AppStream 2.0 fleet needs to communicate with resources both in an existing
+VPC and on-premises. The VPC is connected to the on-premises environment using an AWS Direct Connect private virtual interface.
+What implementation enables on-premises users to connect to AppStream and existing VPC resources?
+
+A. Deploy two subnets into the existing VPC. Add a public virtual interface to 
+the Direct Connect connection for users to access the AppStream endpoint
+B. Deploy two subnets into the existing VPC. Add a private virtual interface on 
+the Direct Connect connection for users to access the AppStream endpoint.
+C. Deploy a new VPC with two subnets. Create a VPC peering connection between the 
+two VPCs for users to access the AppStream endpoint.
+D. Deploy one subnet into the existing VPC. Add a private virtual interface on the 
+Direct Connect connection for users to access the AppStream endpoint.
+
+AppStream 2.0 requires a VPC subnet; this can be a private subnet with NATGW. 
+Adding a second subnet on a different AZ will add high-availability.
+
+B - is high available AppStream spread across two private subnets.
+
+D is also OK for AppStream2 but not highly available.
+
+1-31. An organization has ordered a new AWS Direct Connect connection. 
+The AWS Management Console reports that the connection is available and BGP status is up. 
+However, the networking team is not able to reach instances in the VPC using ping on the organization's private IP address
+What could cause this connectivity issue? (Choose two.)
+
+A. The VGW is not advertising the correct CIDR range back on-premises.
+B. The instance security group does not allow ICMP traffic.
+C. A public virtual interface must be configured for Amazon EC2 connectivity.
+D. The on-premises router is not advertising the correct CIDR range to AWS.
+E. There is a misconfiguration of the bi-directional forwarding detection.
+
+B,D
+Might the specific routes are not advertise to Dx .
+Security group might be customized and the particular host / icmp is not allowed
+
+1-32. A company has a hybrid IT architecture with two AWS Direct Connect connections to provide high availability. 
+The services hosted on-premises are accessible using public IPs, and are also on the 172.16.0.0/16 range. 
+The AWS resources are on the 192.168.0.0/18 range. The company wants to use Amazon Elastic Load
+Balancing for SSL offloading, health checks, and sticky sessions.
+What should be done to meet these requirements?
+
+A. Create a Network Load Balancer pointing to the on-premises server's private IP address.
+B. Create an Amazon CloudFront distribution for the on-premises service and 
+ use the public IPs of the on-premises servers as the origin.
+C. Create a Network Load Balancer pointing to the on-premises server's public IP address.
+D. Create an Application Load Balancer pointing to the on-premises server's private IP address.
+
+D
+Need to be perform SSL offload , session sticky,etc.
+Also ALB supports on-prem IP address targets.
+
+https://aws.amazon.com/blogs/aws/new-application-load-balancing-via-ip-address-to-aws-on-premises-resources/
+
+1-33. A company deployed its production Amazon VPC using CIDR block 33.16.0.0/16.
+ The company has nearly depleted its addresses and now needs to extend the
+VPC network.
+Which CIDR blocks meet the company's requirement to extend the VPC network with a secondary CIDR? (Choose two.)
+
+A. 33.17.0.0/16
+B. 172.16.0.0/18
+C. 100.70.0.0/17
+D. 192.168.1.0/24
+E. 10.0.0.0/8
+
+A & C - https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Subnets.html#add-cidr-block-restrictions
+
+1-34. A company is deploying a new web application that uses a three-tier model with a 
+public-facing Network Load Balancer and web servers in an Amazon VPC. 
+The application servers are hosted in the company's data center. 
+There is an AWS Direct Connect connection between the VPC and the company's data center. 
+Load testing results indicate that up to 100 servers, equally distributed across multiple Availability Zones, 
+are required to handle peak loads.
+The Network Engineer needs to design a VPC that has a /24 CIDR assigned to it.
+How should the Engineer allocate subnets across three Availability Zones for each tier?
+
+A. Network Load Balancer: /29 per subnet Web: /26 per subnet
+B. Network Load Balancer: /28 per subnet Web: /25 per subnet
+C. Network Load Balancer: /28 per subnet Web: /27 per subnet
+D. Network Load Balancer: /28 per subnet Web: /26 per subnet
+
+D. /26 has 64 IPs, two of them sufficient for 100 servers. And NLB minimum is /28
+
+1-35. Changes made to a security group attached to an Application Load Balancer resulted in
+ connectivity issues for a company's production web application. The Network Engineer needs to lock down
+ permissions for the company's AWS account, automate auditing for any changes, and set up notifications.
+What actions should accomplish this?
+
+A. Configure IAM user policies to lock down permissions for specific users.
+ Enable AWS CloudTrail to identify API calls from users. Use AWS Config to audit any changes, 
+and configure Amazon SNS to send notifications.
+B. Configure IAM user policies to lock down permissions for specific users. 
+Enable AWS CloudTrail to identify the API calls from users. 
+Configure AWS CodeCommit to audit any changes in configurations, and configure Amazon SNS to send notifications.
+C. Configure IAM user policies to lock down permissions for specific users. 
+Enable AWS CloudTrail to identify the API calls from users. 
+Configure Amazon Macie to use machine learning to identify any configuration changes, and configure Amazon SNS to send notifications.
+D. Configure IAM role policies to lock down permissions for specific users. 
+Configure Amazon GuardDuty to audit and monitor configuration changes, 
+and configure Amazon SNS to send notifications.
+
+A - Guard Duty is not for this use case: https://aws.amazon.com/guardduty/
