@@ -1,3 +1,6 @@
+https://www.examtopics.com/exams/amazon/ans-c00
+
+
 1.Your organizations corporate website must be available on www.acme.com and acme.com.
 How should you configure Amazon Route 53 to meet this requirement?
 A. Configure acme.com with an ALIAS record targeting the ELB. www.acme.com with an ALIAS record targeting the ELB.
@@ -1670,3 +1673,225 @@ Configure Amazon GuardDuty to audit and monitor configuration changes,
 and configure Amazon SNS to send notifications.
 
 A - Guard Duty is not for this use case: https://aws.amazon.com/guardduty/
+
+1-36. A computing team is evaluating whether to place a high performance computing (HPC) application in AWS.
+ The team is concerned about application performance and wants to know what options are available
+ to increase networking performance.
+Which of the following changes would increase performance for this application? (Choose two.)
+
+
+A. Place the application across many smaller instances to achieve higher total throughput.
+B. Increase the MTU of the VPC to 9001.
+C. Enable an MTU of 9001 in the application's operating system.
+D. Enable enhanced networking on the instances.
+E. Deploy the application in two Availability Zones and insert them in one placement group.
+
+Correct answer C, D
+
+A- smaller instances won't increase performance
+B- Cannot increase MTU on a VPC
+C- correct
+D- correct
+E- cluster placement group could help, needs to be deployed inside one AZ
+
+1-37. An organization has created a web application inside a VPC and wants to make it available to 200 client VPCs. 
+The client VPCs are in the same region but are owned by other business units within the organization.
+What is the best way to meet this requirement, without making the application publicly available?
+
+A. Configure the application as an AWS PrivateLink-powered service, 
+and have the client VPCs connect to the endpoint service by using an interface VPC endpoint.
+B. Enable VPC peering between the web application VPC and all client VPCs.
+C. Deploy the web application behind an internet-facing Application Load Balancer 
+and control which clients have access by using security groups.
+D. Deploy the web application behind an internal Application Load Balancer 
+and control which clients have access by using security groups
+
+Answer - A.
+private-link provides scalability to provide private connection
+
+1-38. A company's IT Security team needs to ensure that all servers within an Amazon VPC can communicate with
+ a list of five approved external IPs only. The team also wants to receive a notification every time any server tries to
+ open a connection with a non-approved endpoint.
+What is the MOST cost-effective solution that meets these requirements?
+
+A. Add allowed IPs to the network ACL for the application server subnets.
+ Enable VPC Flow Logs with a filter set to ALL. Create an Amazon CloudWatch Logs filter on 
+the VPC Flow Logs log group filtered by REJECT. Create an alarm for this metric to notify the Security team.
+B. Enable Amazon GuardDuty on the account and the specific region. 
+Upload a list of allowed IPs to Amazon S3 and link the S3 object to the GuardDuty trusted IP list. 
+Configure an Amazon CloudWatch Events rule on all GuardDuty findings to trigger an Amazon SNS notification to the Security team.
+C. Add allowed IPs to the network ACL for the application server subnets.
+ Enable VPC Flow Logs with a filter set to REJECT. Set an Amazon CloudWatch Logs filter for the log group on every event. 
+Create an alarm for this metric to notify the Security team.
+D. Enable Amazon GuardDuty on the account and specific region. 
+Upload a list of allowed IPs to Amazon S3 and link the S3 object to the GuardDuty threat IP list. 
+Integrate GuardDuty with a compatible SIEM to report on every alarm from GuardDuty.
+
+Answer: C
+A and C amount to the same result.
+However CloudWatch vended ingestion has a price. 
+Therefore, send only necessary data to CloudWatch. i.e. filter at the source to reduce volume
+ - deliver the filtered results to CloudWatch
+
+1-39. The Security department has mandated that all outbound traffic from a VPC 
+toward an on-premises datacenter must go through a security appliance that runs on an Amazon EC2 instance.
+Which of the following maximizes network performance on AWS? (Choose two.)
+
+A. Support for the enhanced networking drivers
+B. Support for sending traffic over the Direct Connect connection
+C. The instance sizes and families supported by the security appliance
+D. Support for placement groups within the VPC
+E. Security appliance support for multiple elastic network interfaces
+
+A, C
+https://docs.aws.amazon.com/AWSEC2/latest/WindowsGuide/enhanced-networking.html
+
+1-40. A Network Engineer needs to be automatically notified when a certain TCP port is accessed on 
+a fleet of Amazon EC2 instances running in an Amazon VPC.
+Which of the following is the MOST reliable solution?
+
+A. Create an inbound rule in the VPC's network ACL that matches the TCP port. 
+Create an Amazon CloudWatch alarm on the NetworkPackets metric for the ACL 
+that uses Amazon SNS to notify the Administrator when the metric is greater than zero.
+B. Install intrusion detection software on each Amazon EC2 instance and configure it
+ to use the AWS CLI to notify the Administrator with Amazon SNS each time the TCP port is accessed.
+C. Create VPC Flow Logs that write to Amazon CloudWatch Logs, 
+with a metric filter matching connections on the required port. Create a CloudWatch alarm 
+on the resulting metric that uses Amazon SNS to notify the Administrator when the metric is greater than zero.
+D. Install intrusion detection software on each Amazon EC2 instance and configure 
+it to use the AWS CLI to publish to a custom Amazon CloudWatch metric each time the TCP port is accessed. 
+Create a CloudWatch alarm on the resulting metric that uses Amazon SNS to notify the Administrator when the metric is greater than zero
+
+C. Because IDS with CLI is not reliable, what if the CLI failed?
+
+1-41. A network engineer deploys an application in a private subnet in a VPC 
+that connects to many external video feed providers using RTMP over the internet. 
+A NAT gateway has been deployed in a public subnet and is working as expected.
+ From the Amazon EC2 instance, the application is able to connect to all feed providers except one, which hangs when connecting. Manually testing a connection from an Amazon EC2 instance in the public subnet to the problem feed indicates that the feed works as expected.
+What is causing this issue?
+
+A. The NAT gateway does not support fragmented packets.
+B. The internet gateway only supports an MTU of 1500 bytes.
+C. An Amazon EC2 instance expects to communicate with an MTU of 9001.
+D. The security group on the instances does not allow PMTUD.
+
+A. https://docs.aws.amazon.com/vpc/latest/userguide/nat-gateway-troubleshooting.html
+
+1-42. A company has an application running in an Amazon VPC that must be able to communicate with
+ on-premises resources in a data center. Network traffic between
+AWS and the data center will initially be minimal, but will increase to more than 10 Gbps over the next few months.
+ The company's goal is to launch the application as quickly as possible.
+The Network Engineer has been asked to design a hybrid IT connectivity solution.
+What should be done to meet these requirements?
+
+A. Submit a 1 Gbps AWS Direct Connect connection request, 
+then increase the number of Direct Connect connections, as needed.
+B. Allocate elastic IPs to Amazon EC2 instances for temporary access to on-premises resources,
+ then provision AWS VPN connections between an Amazon VPC and the data center.
+C. Provision an AWS VPN connection between an Amazon VPC and the data center, 
+then submit an AWS Direct Connect connection request. Later, cut over from the VPN connection to one or more Direct Connect connections, as needed.
+D. Provision a 100 Mbps AWS Direct Connect connection between an Amazon VPC and the data center,
+ then submit a Direct Connect connection request. Later, cut over from the hosted connection to one or more Direct Connect connections, as needed.
+
+C for sure, adding the EIP's to the instances as per B is pointless....i seriously 
+don;t understand how some of the answers to these questions have been decided!!
+
+1-43. A company has recently established an AWS Direct Connect connection from its on-premises data center to AWS.
+ A Network Engineer has blocked all traffic destined for Amazon S3 over the company's gateway to the internet from
+ its on-premises firewall. S3 traffic should only traverse the Direct Connect connection.
+Currently, no one in the on-premises data center can access Amazon S3.
+Which solution will resolve this connectivity issue?
+
+A. Configure a private virtual interface on the Direct Connect connection. 
+Update the on-premises routing tables to choose Direct Connect as the preferred next hop for traffic destined for Amazon S3.
+B. Establish an S3 VPC endpoint for the company's Amazon VPC. 
+Configure a private virtual interface on the Direct Connect connection. 
+Update the on-premises routing tables to choose Direct Connect as the preferred next hop
+C. Configure a public virtual interface on the Direct Connect connection. 
+Update the on-premises routing tables to choose Direct Connect as the preferred next hop for traffic destined for Amazon S3.
+D. Configure a public virtual interface on the Direct Connect connection. 
+Establish an AWS managed VPN over the connection. Update the on-premises routing tables 
+to choose the VPN connection as the preferred next hop.
+
+Answer: C
+
+A - incorrect - should be a public VIF
+B - incorrect - "Endpoint connections cannot be extended out of a VPC. 
+Resources on the other side of a VPN connection, VPC peering connection, transit gateway,
+ AWS Direct Connect connection, or ClassicLink connection in your VPC cannot use the endpoint 
+to communicate with resources in the endpoint service"
+C - correct - public VIF to access S3 resources over DX link
+D - incorrect - AWS managed VPN is established over the internet, not Direct Connect.
+ https://d1.awsstatic.com/whitepapers/aws-amazon-vpc-connectivity-options.pdf
+
+1-44. A company provisions an AWS Direct Connect connection to permit access to 
+Amazon EC2 resources in several Amazon VPCs and to data stored in private
+Amazon S3 buckets. The Network Engineer needs to configure the company's on-premises router 
+for this Direct Connect connection.
+Which of the following actions will require the LEAST amount of configuration overhead on the customer router?
+
+A. Configure private virtual interfaces for the VPC resources and for Amazon S3.
+B. Configure private virtual interfaces for the VPC resources and a public virtual interface for Amazon S3.
+C. Configure a private virtual interface to a Direct Connect gateway for the VPC resources and for Amazon S3.
+D. Configure a private virtual interface to a Direct Connect gateway for the VPC resources and a public virtual interface for Amazon S3.
+
+D. S3 is in a public zone and would require a public VIF
+
+1-45. A company has two redundant AWS Direct Connect connections to a VPC. 
+The VPC is configured using BGP metrics so that one Direct Connect connection is used as the primary traffic path. 
+The company wants the primary Direct Connect connection to fail to the secondary in less than one second.
+What should be done to meet this requirement?
+
+A. Configure BGP on the company's router with a keep-alive to 300 ms and the BGP hold timer to 900 ms.
+B. Enable Bidirectional Forwarding Detection (BFD) on the company's router with a detection minimum interval of 300 ms and a BFD liveness detection multiplier of 3.
+C. Enable Dead Peer Detection (DPD) on the company's router with a detection minimum interval of 300 ms and a DPD liveliness detection multiplier of 3.
+D. Enable Bidirectional Forwarding Detection (BFD) echo mode on the company's router and disable sending the Internet Control Message Protocol (ICMP) IP packet requests.
+
+Ans B
+
+https://aws.amazon.com/premiumsupport/knowledge-center/enable-bfd-direct-connect/
+
+1-46. A company's Network Engineering team is solely responsible for deploying VPC infrastructure using AWS CloudFormation.
+ The company wants to give its
+Developers the ability to launch applications using CloudFormation templates so that subnets can be created using available CIDR ranges.
+What should be done to meet these requirements?
+
+A. Create a CloudFormation templates with Amazon EC2 resources that rely on cfn-init and cfn-signals to inform the stack of available CIDR ranges.
+B. Create a CloudFormation template with a custom resource that analyzes traffic activity in VPC Flow Logs and reports on available CIDR ranges.
+C. Create a CloudFormation template that references the Fn::Cidr intrinsic function within a subnet resource to select an available CIDR range.
+D. Create a CloudFormation template with a custom resource that uses AWS Lambda and Amazon DynamoDB to manage available CIDR ranges.
+
+C. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-cidr.html
+
+1-47. A company's web application is deployed on Amazon EC2 instances behind a public Application Load Balancer.
+ The application flags malicious requests and uses an AWS Lambda function to add the offending 
+IP addresses to the network ACL to block any further request for 24 hours. 
+Recently, the application has been receiving more malicious requests, which causes the network ACL to reach its limit of allowed entries.
+Which action should be taken to block more IP addresses, without compromising the existing security requirements?
+
+
+A. Update the AWS Lambda function to remove blocked entries from the network ACL after 2 hours.
+B. Update the AWS Lambda function to block malicious IPs in security groups rather than the network ACL.
+C. Update the AWS Lambda function to block malicious IPs in AWS WAF attached to the Application Load Balancer.
+D. Update the AWS Lambda function to add an additional network ACL to the subnets once the limit 
+for the previous ones has been reached.
+
+C. References:
+https://aws.amazon.com/waf/faqs/
+and
+https://bit.ly/3gwC1ou
+
+1-48. A company is using AWS to host all of its applications. Each application is isolated in its own Amazon VPC.
+ Different environments such as Development, Test, and Production are also isolated in their own VPCs. 
+The Network Engineer needs to automate VPC creation to enforce the company's network and security standards. Additionally, 
+the CIDR range used in each VPC needs to be unique.
+Which solution meets all of these requirements?
+
+A. Use AWS CloudFormation to deploy the VPC infrastructure and a custom resource to request 
+a CIDR range from an external IP address management (IPAM) service.
+B. Use AWS OpsWorks to deploy the VPC infrastructure and a custom resource to request 
+a CIDR range from an external IP address management (IPAM) service.
+C. Use the VPC wizard in the AWS Management Console. Type in the CIDR blocks for the VPC and subnets.
+D. Create the VPCs using AWS CLI and use the dry-run flag to validate if the current CIDR range is in use.
+
+A is correct
